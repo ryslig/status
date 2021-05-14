@@ -1,0 +1,107 @@
+body {
+	font-family: Georgia, serif;
+	font-size: 13px;
+	word-break: break-word;
+	margin: 0;
+	margin-bottom: 2em;
+}
+
+a {
+	word-break: break-all;
+}
+
+h1, h2, h3, p {
+	margin: 10px 0;
+	font-weight: normal;
+}
+
+img {
+	border: 0;
+}
+
+.timeline {
+	font-size: 14px;
+}
+
+input[type=text], input[type=password], input[type=email], textarea, select {
+	font-size: inherit;
+	padding: 2px 4px;
+}
+
+textarea {
+	width: 100%;
+	resize: none;
+	padding: 0;
+}
+
+img[src="/images/icon_delete.gif"] {
+	vertical-align: bottom;
+}
+
+#sidebar ul {
+	margin: 0;
+	padding: 0;
+	margin-left: 25px;
+}
+
+#sidebar li {
+	font-size: 1.15em;
+}
+
+small {
+	font-size: 0.75em;
+}
+
+img.thumb {
+	padding: 1px;
+	display: block;
+}
+
+.alert {
+	padding: 4px;
+	margin-bottom: 1em;
+	text-align: center;
+}
+
+ul.nav li {
+	display: inline;
+}
+
+ul.nav {
+	margin: 0;
+	padding: 0;
+}
+
+ul.nav li:after {
+	content: '-';
+	margin: 0 5px;
+}
+
+ul.nav li.last:after {
+	content: '';
+	margin: 0;
+}
+
+/* DEFAULT COLORS */
+
+body {
+	background-color: white;
+	color: black;
+}
+
+a {
+	color: blue;
+}
+
+.alert {
+	border: 1px solid blue;
+}
+
+label, q, small {
+	color: grey;
+}
+
+img.thumb, input[type=text], input[type=password], input[type=email], textarea, select {
+	border: 1px solid lightgrey;
+	background-color: inherit;
+}
