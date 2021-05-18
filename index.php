@@ -1,6 +1,12 @@
 <?php
 ob_start();
+
+$starttime = microtime(true);
+
 include('config.php');
+
+ini_set('session.gc_maxlifetime', 86400);
+session_set_cookie_params(86400);
 session_start();
 
 $GLOBALS['conn'] = $conn = new mysqli($config['db']['host'], $config['db']['user'], $config['db']['pass'], $config['db']['db']);
@@ -355,6 +361,7 @@ if(isset($raw)) {
 			</td>
 		</tr>
 	</table>
+	<!-- <?php $endtime = microtime(true); printf("Page loaded in %f seconds", $endtime - $starttime); ?> -->
 </body>
 </html>
 <?php
