@@ -6,7 +6,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 			if(strlen($_POST['username']) <= 16) {
 				if(!preg_match("/[^0-9a-zA-Z\s]/", $_POST['username'])) {
 					if(mysqli_num_rows(mysqli_query($conn, "SELECT * FROM `users` WHERE `username` = '".$_POST['username']."';")) == 0) {
-						$username = mb_convert_encoding($_POST['username'], 'ASCII');
+						$username = $_POST['username'];
 					} else { $_SESSION['alert'] = "That username is already taken!"; }
 				} else { $_SESSION['alert'] = "Username cannot contain special characters!"; }
 			} else { $_SESSION['alert'] = "Username cannot be longer than 16 characters!"; }
@@ -16,7 +16,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 	if(isset($_POST['fullname'])) {
 		if(strlen(trim($_POST['fullname'])) >= 2) {
 			if(strlen(trim($_POST['fullname'])) <= 20) {
-				$fullname = mb_convert_encoding(trim($_POST['fullname']), 'ASCII');
+				$fullname = trim($_POST['fullname']);
 			} else { $_SESSION['alert'] = "Your full name cannot be longer than 20 characters!"; }
 		} else { $_SESSION['alert'] = "Your full name must be longer than 2 characters!"; }
 	} else { $_SESSION['alert'] = "Please enter your full name! Or you can just make something up."; }
@@ -46,12 +46,12 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 <form method="post" action="/signup">
 	<table cellpadding="0" cellspacing="8" border="0">
 		<tr>
-			<td align="right"><label for="username">Username:</label></td>
-			<td><input type="text" name="username" maxlength="16"></td>
+			<td align="right"><label for="fullname">Name:</label></td>
+			<td><input type="text" name="fullname" maxlength="20"></td>
 		</tr>
 		<tr>
-			<td align="right"><label for="fullname">Full Name:</label></td>
-			<td><input type="text" name="fullname" maxlength="20"></td>
+			<td align="right"><label for="username">Screen Name:</label></td>
+			<td><input type="text" name="username" maxlength="16"></td>
 		</tr>
 		<tr>
 			<td align="right"><label for="password">Create Password:</label></td>
