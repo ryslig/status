@@ -1,45 +1,20 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>STATUS.RYSLIG.XYZ</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" href="/images/quill.gif" type="image/gif">
-<link rel="shortcut icon" href="/images/quill.gif" type="image/gif">
 <?php
-
-$theme = mysqli_fetch_array(mysqli_query($conn, "SELECT * FROM `users` WHERE `username` = '".$_SESSION['username']."'"), MYSQLI_ASSOC);
-echo '<style>
-body {
-	font-family: sans-serif;
-	font-size: 12px;
-	margin: 5px 0;
-	background-color: '.$theme['bg_color'].';
-	color: '.$theme['text_color'].';
-	word-break: break-all;
-}
-
-form {
-	text-align: center;
-}
-
-hr {
-	border: 0;
-	border-bottom: 1px dashed '.$theme['border_color'].';
-}
-
-p {
-	margin: 4px 8px;
-}
-
-small {
-	color: '.$theme['meta_color'].';
-}
-
-a {
-	color: '.$theme['link_color'].';
-}
+$theme = mysqli_fetch_array(mysqli_query($conn, "SELECT bg_color, text_color, border_color, meta_color, link_color FROM users WHERE username = '".$_SESSION['username']."'"), MYSQLI_ASSOC);
+echo '<style type="text/css">
+body {font-family: sans-serif;font-size: 12px;margin: 5px 0;background-color: '.$theme['bg_color'].';color: '.$theme['text_color'].';}
+a {word-break: break-all;}
+form {text-align: center;}
+hr {border: 0;border-bottom: 1px dashed '.$theme['border_color'].';}
+p {margin: 4px 8px;}
+small {color: '.$theme['meta_color'].';}
+a {color: '.$theme['link_color'].';}
 </style>';
-
 ?>
 </head>
 <body>
@@ -64,14 +39,13 @@ if(isset($_POST['status'])) {
 }
 ?>
 <form method="post" action="/widget">
-	<input type="text" name="status" placeholder="What are you doing?" maxlength="140" autocomplete="off">
-	<input type="submit" value="Update">
+<input type="text" name="status" maxlength="140">
+<input type="submit" value="Update">
 </form>
 <?php
 $timeline = get_timeline('timeline');
-foreach($timeline['timeline'] as $status) {
-	echo '<hr><p><strong>'.$status['author']['name'].':</strong> '.$status['status'].' <small>('.$status['date']['timeago'].')</small></p>';
-}
+foreach($timeline['timeline'] as $status) echo '<hr>
+<p><strong>'.$status['author']['name'].':</strong> '.$status['status'].' <small>('.$status['date']['timeago'].')</small></p>';
 ?>
 </body>
 </html>
