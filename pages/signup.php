@@ -46,12 +46,12 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 <form method="post" action="/signup">
 	<table cellpadding="0" cellspacing="8" border="0">
 		<tr>
-			<td align="right"><label for="fullname">Name:</label></td>
-			<td><input type="text" name="fullname" maxlength="20"></td>
+			<td align="right"><label for="username">Username:</label></td>
+			<td><input type="text" name="username" maxlength="16"></td>
 		</tr>
 		<tr>
-			<td align="right"><label for="username">Screen Name:</label></td>
-			<td><input type="text" name="username" maxlength="16"></td>
+			<td align="right"><label for="fullname">Full Name:</label></td>
+			<td><input type="text" name="fullname" maxlength="20"></td>
 		</tr>
 		<tr>
 			<td align="right"><label for="password">Create Password:</label></td>

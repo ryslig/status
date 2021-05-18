@@ -38,7 +38,7 @@ if(isset($_POST['status'])) {
 	header('Location: /widget');
 }
 ?>
-<form method="post" action="/widget">
+<form method="post" action="/widget" autocomplete="off">
 <input type="text" name="status" maxlength="140">
 <input type="submit" value="Update">
 </form>

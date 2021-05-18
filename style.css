@@ -104,4 +104,5 @@ label, q, small {
 img.thumb, input[type=text], input[type=password], input[type=email], textarea, select {
 	border: 1px solid lightgrey;
 	background-color: inherit;
+	color: inherit;
 }

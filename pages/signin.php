@@ -2,13 +2,20 @@
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if(isset($_POST['username']) and isset($_POST['password'])) {
 		if(!preg_match("/[^0-9a-zA-Z\s]/", $_POST['username'])) {
-			$sql = mysqli_fetch_array(mysqli_query($conn, "SELECT username, password FROM users WHERE username = '".$_POST['username']."'"), MYSQLI_ASSOC);
-			if(isset($sql['password'])) {
-				if(password_verify($_POST['password'], $sql['password'])) {
-					$_SESSION['username'] = $sql['username'];
-					header('Location: /home');
-				} else { $_SESSION['alert'] = "That password is incorrect!"; }
-			} else { $_SESSION['alert'] = "That user does not exist in our database!"; }
+			$sql = mysqli_fetch_array(mysqli_query($conn, "SELECT username, password, admin, banned FROM users WHERE username = '".$_POST['username']."'"), MYSQLI_ASSOC);
+			if($sql['banned'] !== '1') {
+				if(isset($sql['password'])) {
+					if(password_verify($_POST['password'], $sql['password'])) {
+						$_SESSION['username'] = $sql['username'];
+						if($sql['admin'] ==  "1") {
+							$_SESSION['admin'] = true;
+						} else {
+							$_SESSION['admin'] = false;
+						}
+						header('Location: /home');
+					} else { $_SESSION['alert'] = "That password is incorrect!"; }
+				} else { $_SESSION['alert'] = "That user does not exist in our database!"; }
+			} else { $_SESSION['alert'] = "Sorry, you've been banned! Please contact me if you think this was a mistake."; }
 		} else { $_SESSION['alert'] = "Please enter a valid username!"; }
 	} else { $_SESSION['alert'] = "Please enter your credentials!"; }
 	if(isset($_SESSION['alert'])) {

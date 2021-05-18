@@ -224,14 +224,30 @@ switch($request) {
 		}
 		$raw = true;
 		break;
+	case '/admin/become';
+		if($_SESSION['admin'] !== true) {
+			header('Location: /');
+		} else {
+			$load = 'pages/admin_become.php';
+		}
+		break;
+	case '/admin/ban';
+		if($_SESSION['admin'] !== true) {
+			header('Location: /');
+		} else {
+			$load = 'pages/admin_ban.php';
+		}
+		break;
 	case '/profile';
 		if(!preg_match("/[^0-9a-zA-Z\s]/", $_GET['user'])) {
-			$sql = mysqli_query($conn, "SELECT `username` FROM `users` WHERE `username` = '".mysqli_real_escape_string($conn, $_GET['user'])."'");
+			$sql = mysqli_query($conn, "SELECT username, banned FROM `users` WHERE `username` = '".mysqli_real_escape_string($conn, $_GET['user'])."'");
 			$sql = mysqli_fetch_array($sql, MYSQLI_ASSOC);
 			if(!empty($sql['username'])) {
-				$title = $sql['username'];
-				$load = 'pages/profile.php';
-				break;
+				if($sql['banned'] !== true) {
+					$title = $sql['username'];
+					$load = 'pages/profile.php';
+					break;
+				}
 			}
 		}
 	default:
@@ -242,7 +258,7 @@ switch($request) {
 }
 
 if(isset($_SESSION['username'])) {
-	if(mysqli_num_rows(mysqli_query($conn, "SELECT * FROM `users` WHERE `username` = '".$_SESSION['username']."';")) == 0) {
+	if(mysqli_num_rows(mysqli_query($conn, "SELECT username FROM users WHERE username = '".$_SESSION['username']."' and banned = 0")) == 0) {
 		require 'pages/signout.php';
 		exit;
 	}
@@ -329,10 +345,20 @@ if(isset($raw)) {
 					}
 				?>
 				<br><br>
+				<?php
+					if($load == 'pages/profile.php' and $_SESSION['admin'] == true and $_SESSION['username'] !== $_GET['user']) {
+						echo '<h2>admin tools</h2>
+						<ul>
+						<li><a href="/admin/become?user='.$_GET['user'].'">Become User</a></li>
+						<li><a href="/admin/ban?user='.$_GET['user'].'">Ban Account</a></li>
+						</ul>
+						<br><br>';
+					}
+				?>
 				<h2>latest users:</h2>
 				<ul>
 				<?php
-					$sql = "SELECT username, fullname FROM `users` ORDER BY `date` DESC LIMIT 6";
+					$sql = "SELECT username, fullname FROM users WHERE banned != 1 ORDER BY date DESC LIMIT 6";
 					$result = $conn->query($sql);
 					while($row = $result->fetch_assoc()) {
 						echo '<li><a href="/profile?user='.$row['username'].'">'.htmlspecialchars($row['fullname']).'</a></li>';
