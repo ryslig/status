@@ -5,6 +5,7 @@ if(isset($_GET['user'])) {
 		mysqli_query($conn, "DELETE FROM updates WHERE author = '".$_GET['user']."'");
 		mysqli_query($conn, "DELETE FROM follows WHERE follower = '".$_GET['user']."'");
 		mysqli_query($conn, "DELETE FROM follows WHERE following = '".$_GET['user']."'");
+		unlink("images/profiles/".$_GET['user'].".gif");
 		$_SESSION['alert'] = $_GET['user']." has been banned.";
 		header('Location: /home');
 	} else {
