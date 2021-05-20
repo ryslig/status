@@ -5,6 +5,11 @@ $starttime = microtime(true);
 
 include('config.php');
 
+if($config['brb'] == true) {
+	http_response_code(423);
+	exit;
+}
+
 ini_set('session.gc_maxlifetime', 86400);
 session_set_cookie_params(86400);
 session_start();
@@ -58,6 +63,9 @@ function get_timeline($type, $page = 0, $user = false) {
 		array_push($following, $_SESSION['username']);
 	}
 	switch($type) {
+		case 'offline':
+			$sql = "SELECT * FROM `updates` ORDER BY CAST(id as SIGNED INTEGER) DESC LIMIT 10";
+			break;
 		case 'timeline':
 			$sql = "SELECT * FROM `updates` WHERE `author` IN ('".implode("','", $following)."') ORDER BY CAST(id as SIGNED INTEGER) DESC LIMIT ".$page*'25'.",25";
 			$count = "SELECT COUNT(*) FROM `updates` WHERE `author` IN ('".implode("','", $following)."')";
@@ -65,20 +73,17 @@ function get_timeline($type, $page = 0, $user = false) {
 		case 'currently':
 			$sql = "SELECT * FROM `updates` WHERE `id` IN (SELECT MAX(`id`) FROM `updates` GROUP BY `author`) AND date > DATE_SUB(NOW(), INTERVAL 7 DAY) AND `author` IN ('".implode("','", $following)."') ORDER BY CAST(id as SIGNED INTEGER) DESC";
 			break;
-		case 'offline':
-			$sql = "SELECT * FROM `updates` ORDER BY CAST(id as SIGNED INTEGER) DESC LIMIT 10";
-			break;
-		case 'profile':
-			$sql = "SELECT * FROM `updates` WHERE `author` = '".$user."' ORDER BY CAST(id as SIGNED INTEGER) DESC LIMIT ".$page*'25'.",25";
-			$count = "SELECT COUNT(*) FROM `updates` WHERE `author` = '".$user."'";
+		case 'mentions':
+			$sql = "SELECT * FROM `updates` WHERE `status` LIKE '%@".$_SESSION['username']."%' ORDER BY CAST(id as SIGNED INTEGER) DESC LIMIT 25";
+			$count = "SELECT COUNT(*) FROM `updates` WHERE `status` LIKE '%@".$_SESSION['username']."%'";
 			break;
 		case 'public':
 			$sql = "SELECT * FROM `updates` ORDER BY CAST(id as SIGNED INTEGER) DESC LIMIT ".$page*'25'.",25";
 			$count = "SELECT COUNT(*) FROM `updates`";
 			break;
-		case 'mentions':
-			$sql = "SELECT * FROM `updates` WHERE status LIKE '%@".$_SESSION['username']."%' ORDER BY CAST(id as SIGNED INTEGER) DESC LIMIT 25";
-			$count = "SELECT * FROM `updates` WHERE status LIKE '%@".$_SESSION['username']."%'";
+		case 'profile':
+			$sql = "SELECT * FROM `updates` WHERE `author` = '".$user."' ORDER BY CAST(id as SIGNED INTEGER) DESC LIMIT ".$page*'25'.",25";
+			$count = "SELECT COUNT(*) FROM `updates` WHERE `author` = '".$user."'";
 			break;
 	}
 	$result = $GLOBALS['conn']->query($sql);
@@ -230,6 +235,7 @@ switch($request) {
 		} else {
 			$load = 'pages/admin_become.php';
 		}
+		$raw = true;
 		break;
 	case '/admin/ban';
 		if($_SESSION['admin'] !== true) {
@@ -237,6 +243,7 @@ switch($request) {
 		} else {
 			$load = 'pages/admin_ban.php';
 		}
+		$raw = true;
 		break;
 	case '/profile';
 		if(!preg_match("/[^0-9a-zA-Z\s]/", $_GET['user'])) {
@@ -284,16 +291,14 @@ if(isset($raw)) {
 	<link href="/style.css" rel="stylesheet" type="text/css">
 	<link rel="icon" href="/images/quill.gif" type="image/gif">
 	<link rel="shortcut icon" href="/images/quill.gif" type="image/gif">
+	<script src="/app.js"></script>
 	<?php
-	if(isset($_SESSION['username'])) {
-		echo '<script src="/app.js"></script>';
-	}
 	if($load == "pages/profile.php") {
 		echo '<meta property="og:type" content="website">
 		<meta property="og:site_name" content="status.ryslig.xyz">
 		<meta property="og:title" content="'.ucfirst($title)."'s Profile".'">
 		<meta property="og:image" content="http://status.ryslig.xyz/images/profiles/'.$title.'.gif">
-		<link rel="alternate" type="application/rss+xml" title="'.strtoupper($title).' :: STATUS.RYSLIG.XYZ" href="http://status.ryslig.xyz/rss?user='.$title.'">';
+		<link rel="alternate" type="application/rss+xml" title="'.strtoupper($title).' :: STATUS.RYSLIG.XYZ" href="http://status.ryslig.xyz/rss?user='.$_GET['user'].'">';
 	}
 	if(isset($_SESSION['username']) or $load == 'pages/profile.php') {
 		if($load !== 'pages/profile.php') {
@@ -301,32 +306,17 @@ if(isset($raw)) {
 		} else {
 			$theme = mysqli_fetch_array(mysqli_query($conn, "SELECT * FROM `users` WHERE `username` = '".$_GET['user']."'"), MYSQLI_ASSOC);
 		}
-		echo '<style>
-		body, textarea {
-			background-color: '.$theme['bg_color'].';
-			color: '.$theme['text_color'].';
-		}
-
-		a {
-			color: '.$theme['link_color'].';
-		}
-
-		.alert {
-			border: 1px solid '.$theme['link_color'].';
-		}
-
-		label, q, small {
-			color: '.$theme['meta_color'].';
-		}
-
-		img.thumb, input[type=text], input[type=password], input[type=email], textarea, select {
-			border: 1px solid '.$theme['border_color'].';
-		}
+		echo '<style type="text/css">
+		body, textarea {background-color: '.$theme['bg_color'].';color: '.$theme['text_color'].';}
+		a {color: '.$theme['link_color'].';}
+		.alert {border: 1px solid '.$theme['link_color'].';}
+		label, q, small {color: '.$theme['meta_color'].';}
+		img.thumb, input[type=text], input[type=password], input[type=email], textarea, select {border: 1px solid '.$theme['border_color'].';}
 		</style>';
 	}
 	
 	?>
-	<!--[if IE]><style>body { word-break: break-all; }</style><![endif]-->
+	<!--[if IE]><style type="text/css">body { word-break: break-all; }</style><![endif]-->
 </head>
 <body>
 	<table width="700" align="center">
@@ -346,13 +336,17 @@ if(isset($raw)) {
 				?>
 				<br><br>
 				<?php
-					if($load == 'pages/profile.php' and $_SESSION['admin'] == true and $_SESSION['username'] !== $_GET['user']) {
-						echo '<h2>admin tools</h2>
-						<ul>
-						<li><a href="/admin/become?user='.$_GET['user'].'">Become User</a></li>
-						<li><a href="/admin/ban?user='.$_GET['user'].'">Ban Account</a></li>
-						</ul>
-						<br><br>';
+					if($load == 'pages/profile.php') {
+						if($_SESSION['admin'] == true) {
+							if($_SESSION['username'] !== $_GET['user']) {
+								echo '<h2>admin tools</h2>
+								<ul>
+								<li><a href="/admin/become?user='.$_GET['user'].'">Become User</a></li>
+								<li><a href="/admin/ban?user='.$_GET['user'].'">Ban Account</a></li>
+								</ul>
+								<br><br>';
+							}
+						}
 					}
 				?>
 				<h2>latest users:</h2>
@@ -364,6 +358,11 @@ if(isset($raw)) {
 						echo '<li><a href="/profile?user='.$row['username'].'">'.htmlspecialchars($row['fullname']).'</a></li>';
 					}
 				?>
+				</ul> 
+				<br><br>
+				<h2>misc:</h2>
+				<ul>
+					<li><a href="/widget">Mobile</a></li>
 				</ul>
 			</td>
 			<td valign="top" id="content">

@@ -45,9 +45,8 @@ switch($type) {
 		break;
 }
 
-echo '<h2>'.$header.'</h2>';
-
-echo '<ul class="nav">
+echo '<h2>'.$header.'</h2>
+<ul class="nav">
 	<li><a href="/home">Home</a></li>
 	<li><a href="/home/mentions">Mentions</a></li>
 	<li class="last"><a href="/home/public">Public</a></li>

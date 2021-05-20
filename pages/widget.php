@@ -47,5 +47,9 @@ $timeline = get_timeline('timeline');
 foreach($timeline['timeline'] as $status) echo '<hr>
 <p><strong>'.$status['author']['name'].':</strong> '.$status['status'].' <small>('.$status['date']['timeago'].')</small></p>';
 ?>
+<hr>
+<center>
+	<p><a href="/">Web Version</a></p>
+</center>
 </body>
 </html>

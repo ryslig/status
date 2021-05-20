@@ -5,6 +5,7 @@
 			"user" => "root",
 			"pass" => "",
 			"db" => "status"
-		]
+		],
+		"brb" => false
 	];
 ?>

@@ -1,17 +1,11 @@
 <!DOCTYPE HTML>
 <html lang="en">
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>STATUS.RYSLIG.XYZ</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" href="/images/quill.gif" type="image/gif">
-<link rel="shortcut icon" href="/images/quill.gif" type="image/gif">
 <style>
-body {
-	font-family: sans-serif;
-	font-size: 12px;
-	margin: 10px;
-	word-break: break-all;
-}
+body {font-family: sans-serif;font-size: 12px;margin: 10px;}
 </style>
 <?php
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -38,6 +32,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 		<input type="submit" value="Sign In">
 	</fieldset>
 </form>
+<p>Don't have an account? <a href="/signup">Create one!</a> (not mobile friendly)</p>
 <?php
 if(isset($_SESSION['alert'])) {
 	echo '<br><div style="font-weight: bold;text-align: center;">'.$_SESSION['alert'].'</div>';
