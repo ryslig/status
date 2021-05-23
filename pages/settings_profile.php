@@ -10,7 +10,7 @@ if(isset($_POST['fullname'])) {
 				mysqli_query($conn, "UPDATE users SET website = '".mysqli_real_escape_string($conn, trim($_POST['website']))."' WHERE username = '".$_SESSION['username']."'");
 			} else { $_SESSION['alert'] = "Please enter a valid URL!"; }
 		} else {
-			mysqli_query($conn, "UPDATE users SET website = '' WHERE username = '".$_SESSION['username']."'");
+			mysqli_query($conn, "UPDATE users SET website = null WHERE username = '".$_SESSION['username']."'");
 		}
 	} else { $_SESSION['alert'] = "You need to have a full name!"; }
 	header('Location: /settings/profile');
