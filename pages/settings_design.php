@@ -23,8 +23,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 $user_info = mysqli_fetch_array(mysqli_query($conn, "SELECT * FROM `users` WHERE `username` = '".$_SESSION['username']."'"), MYSQLI_ASSOC);
 ?>
 <h3>Edit Design:</h3>
-<button onclick="reset_theme()">Reset Theme</button>
-<br><br>
 <form method="post" action="/settings/design">
 	<table cellpadding="0" cellspacing="8" border="0">
 		<tr>
@@ -68,7 +66,7 @@ $user_info = mysqli_fetch_array(mysqli_query($conn, "SELECT * FROM `users` WHERE
 		</tr>
 		<tr>
 			<td>&nbsp;</td>
-			<td><input type="submit" value="Save"></td>
+			<td><input type="submit" value="Save"> or <button onclick="reset_theme()">Reset</button></td>
 		</tr>
 	</table>
 </form>

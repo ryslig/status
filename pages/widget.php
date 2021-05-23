@@ -49,7 +49,7 @@ foreach($timeline['timeline'] as $status) echo '<hr>
 ?>
 <hr>
 <center>
-	<p><a href="/">Web Version</a></p>
+	<p><a href="/">Switch to Web Version</a></p>
 </center>
 </body>
 </html>
