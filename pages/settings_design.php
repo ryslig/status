@@ -1,22 +1,24 @@
 <?php
+function color_valid($color) {
+	if(ctype_xdigit(str_replace('#', '', $color)) and strlen($color) == 7) {
+		return true;
+	} else {
+		return false;
+	}
+}
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
-	if(ctype_xdigit(str_replace('#', '', $_POST['bg_color'])) and strlen($_POST['bg_color']) == 7) {
-		mysqli_query($conn, "UPDATE users SET bg_color = '".$_POST['bg_color']."' WHERE username = '".$_SESSION['username']."'");
+	if(color_valid($_POST['bg_color']) == true) {
+		if(color_valid($_POST['text_color']) == true) {
+			if(color_valid($_POST['meta_color']) == true) {
+				if(color_valid($_POST['border_color']) == true) {
+					if(color_valid($_POST['link_color']) == true) {
+						mysqli_query($conn, "UPDATE users SET bg_color = '".$_POST['bg_color']."', text_color = '".$_POST['text_color']."', meta_color = '".$_POST['meta_color']."', border_color = '".$_POST['border_color']."', link_color = '".$_POST['link_color']."', home = '".intval($_POST['homepage_style'])."' WHERE username = '".$_SESSION['username']."'");
+						$_SESSION['alert'] = "Changes saved!";
+					}
+				}
+			}
+		}
 	}
-	if(ctype_xdigit(str_replace('#', '', $_POST['text_color'])) and strlen($_POST['text_color']) == 7) {
-		mysqli_query($conn, "UPDATE users SET text_color = '".$_POST['text_color']."' WHERE username = '".$_SESSION['username']."'");
-	}
-	if(ctype_xdigit(str_replace('#', '', $_POST['meta_color'])) and strlen($_POST['meta_color']) == 7) {
-		mysqli_query($conn, "UPDATE users SET meta_color = '".$_POST['meta_color']."' WHERE username = '".$_SESSION['username']."'");
-	}
-	if(ctype_xdigit(str_replace('#', '', $_POST['border_color'])) and strlen($_POST['border_color']) == 7) {
-		mysqli_query($conn, "UPDATE users SET border_color = '".$_POST['border_color']."' WHERE username = '".$_SESSION['username']."'");
-	}
-	if(ctype_xdigit(str_replace('#', '', $_POST['link_color'])) and strlen($_POST['link_color']) == 7) {
-		mysqli_query($conn, "UPDATE users SET link_color = '".$_POST['link_color']."' WHERE username = '".$_SESSION['username']."'");
-	}
-	mysqli_query($conn, "UPDATE users SET home = '".intval($_POST['homepage_style'])."' WHERE username = '".$_SESSION['username']."'");
-	$_SESSION['alert'] = "Changes saved!";
 	header('Location: /settings/design');
 }
 
