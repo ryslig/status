@@ -32,11 +32,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 		<input type="submit" value="Sign In">
 	</fieldset>
 </form>
-<p>Don't have an account? <a href="/signup">Create one!</a> (not mobile friendly)</p>
+<center>
 <?php
 if(isset($_SESSION['alert'])) {
-	echo '<br><div style="font-weight: bold;text-align: center;">'.$_SESSION['alert'].'</div>';
+	echo '<p><strong>'.$_SESSION['alert'].'</strong></p>';
 }
 ?>
+<p>Don't have an account? <a href="/signup">Create one!</a> (not mobile friendly)</p>
+</center>
 </body>
 </html>

@@ -1,18 +1,22 @@
 <?php
 $user_info = mysqli_fetch_array(mysqli_query($conn, "SELECT * FROM `users` WHERE `username` = '".$_SESSION['username']."'"), MYSQLI_ASSOC);
-if(isset($_POST['fullname'])) {
+if($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if(!empty($_POST['fullname'])) {
-		mysqli_query($conn, "UPDATE users SET fullname = '".mysqli_real_escape_string($conn, trim($_POST['fullname']))."' WHERE username = '".$_SESSION['username']."'");
-		mysqli_query($conn, "UPDATE users SET quote = '".mysqli_real_escape_string($conn, trim($_POST['quote']))."' WHERE username = '".$_SESSION['username']."'");
-		$_SESSION['alert'] = "Changes saved!";
 		if(!empty($_POST['website'])) {
 			if(filter_var($_POST['website'], FILTER_VALIDATE_URL)) {
-				mysqli_query($conn, "UPDATE users SET website = '".mysqli_real_escape_string($conn, trim($_POST['website']))."' WHERE username = '".$_SESSION['username']."'");
-			} else { $_SESSION['alert'] = "Please enter a valid URL!"; }
+				$_SESSION['alert'] = "Changes saved!";
+				mysqli_query($conn, "UPDATE users SET fullname = '".mysqli_real_escape_string($conn, trim($_POST['fullname']))."', quote = '".mysqli_real_escape_string($conn, trim($_POST['quote']))."', website = '".mysqli_real_escape_string($conn, trim($_POST['website']))."' WHERE username = '".$_SESSION['username']."'");
+			} else {
+				$_SESSION['alert'] = "You did not provide a valid website. Did you forget the protocol?";
+				mysqli_query($conn, "UPDATE users SET fullname = '".mysqli_real_escape_string($conn, trim($_POST['fullname']))."', quote = '".mysqli_real_escape_string($conn, trim($_POST['quote']))."' WHERE username = '".$_SESSION['username']."'");
+			}
 		} else {
-			mysqli_query($conn, "UPDATE users SET website = null WHERE username = '".$_SESSION['username']."'");
+			$_SESSION['alert'] = "Changes saved!";
+			mysqli_query($conn, "UPDATE users SET fullname = '".mysqli_real_escape_string($conn, trim($_POST['fullname']))."', quote = '".mysqli_real_escape_string($conn, trim($_POST['quote']))."', website = null WHERE username = '".$_SESSION['username']."'");
 		}
-	} else { $_SESSION['alert'] = "You need to have a full name!"; }
+	} else {
+		$_SESSION['alert'] = "You need to enter a name!";
+	}
 	header('Location: /settings/profile');
 }
 ?>

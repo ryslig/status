@@ -288,7 +288,7 @@ if(isset($raw)) {
 		echo 'STATUS.RYSLIG.XYZ';
 	}
 	?></title>
-	<link href="/style.css" rel="stylesheet" type="text/css">
+	<link href="/style.css?1" rel="stylesheet" type="text/css">
 	<link rel="icon" href="/images/quill.gif" type="image/gif">
 	<link rel="shortcut icon" href="/images/quill.gif" type="image/gif">
 	<script src="/app.js"></script>
@@ -314,7 +314,6 @@ if(isset($raw)) {
 		img.thumb, input[type=text], input[type=password], input[type=email], textarea, select {border: 1px solid '.$theme['border_color'].';}
 		</style>';
 	}
-	
 	?>
 	<!--[if IE]><style type="text/css">body { word-break: break-all; }</style><![endif]-->
 </head>

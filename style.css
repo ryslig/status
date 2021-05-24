@@ -6,10 +6,6 @@ body {
 	margin-bottom: 2em;
 }
 
-a {
-	word-break: break-all;
-}
-
 h1, h2, h3, p {
 	margin: 10px 0;
 	font-weight: normal;
