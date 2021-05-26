@@ -301,9 +301,9 @@ if(isset($raw)) {
 	}
 	if(isset($_SESSION['username']) or $load == 'pages/profile.php') {
 		if($load !== 'pages/profile.php') {
-			$theme = mysqli_fetch_array(mysqli_query($conn, "SELECT bg_color, text_color, meta_color, border_color, link_color FROM `users` WHERE `username` = '".$_SESSION['username']."'"), MYSQLI_ASSOC);
+			$theme = mysqli_fetch_array(mysqli_query($conn, "SELECT bg_color, text_color, meta_color, border_color, link_color, home FROM `users` WHERE `username` = '".$_SESSION['username']."'"), MYSQLI_ASSOC);
 		} else {
-			$theme = mysqli_fetch_array(mysqli_query($conn, "SELECT bg_color, text_color, meta_color, border_color, link_color FROM `users` WHERE `username` = '".$_GET['user']."'"), MYSQLI_ASSOC);
+			$theme = mysqli_fetch_array(mysqli_query($conn, "SELECT bg_color, text_color, meta_color, border_color, link_color, home FROM `users` WHERE `username` = '".$_GET['user']."'"), MYSQLI_ASSOC);
 		}
 		echo '<style type="text/css">
 		body, textarea {background-color: '.$theme['bg_color'].';color: '.$theme['text_color'].';}
