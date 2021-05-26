@@ -7,8 +7,7 @@
 <?php
 $theme = mysqli_fetch_array(mysqli_query($conn, "SELECT bg_color, text_color, border_color, meta_color, link_color FROM users WHERE username = '".$_SESSION['username']."'"), MYSQLI_ASSOC);
 echo '<style type="text/css">
-body {font-family: sans-serif;font-size: 12px;margin: 5px 0;background-color: '.$theme['bg_color'].';color: '.$theme['text_color'].';}
-a {word-break: break-all;}
+body {font-family: Helvetica, Arial, sans-serif;font-size: 12px;margin: 5px 0;background-color: '.$theme['bg_color'].';color: '.$theme['text_color'].';word-break: break-all;}
 form {text-align: center;}
 hr {border: 0;border-bottom: 1px dashed '.$theme['border_color'].';}
 p {margin: 4px 8px;}
@@ -47,9 +46,5 @@ $timeline = get_timeline('timeline');
 foreach($timeline['timeline'] as $status) echo '<hr>
 <p><strong>'.$status['author']['name'].':</strong> '.$status['status'].' <small>('.$status['date']['timeago'].')</small></p>';
 ?>
-<hr>
-<center>
-	<p><a href="/">Switch to Web Version</a></p>
-</center>
 </body>
 </html>

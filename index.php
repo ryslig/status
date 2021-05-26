@@ -357,11 +357,6 @@ if(isset($raw)) {
 					}
 				?>
 				</ul> 
-				<br><br>
-				<h2>misc:</h2>
-				<ul>
-					<li><a href="/widget">Mobile</a></li>
-				</ul>
 			</td>
 			<td valign="top" id="content">
 			<?php
