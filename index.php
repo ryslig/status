@@ -159,13 +159,13 @@ switch($request) {
 		break;
 	case '/home/mentions':
 		if(!isset($_SESSION['username'])) header('Location: /');
-		$title = 'Home';
+		$title = 'Mentions';
 		$type = 'mentions';
 		$load = 'pages/home.php';
 		break;
 	case '/home/public':
 		if(!isset($_SESSION['username'])) header('Location: /');
-		$title = 'Home';
+		$title = 'Public';
 		$type = 'public';
 		$load = 'pages/home.php';
 		break;
@@ -196,11 +196,6 @@ switch($request) {
 		$title = 'Settings';
 		$load = 'pages/settings_password.php';
 		break;
-	case '/rss';
-		header('Content-Type: text/xml');
-		$load = 'pages/rss.php';
-		$raw = true;
-		break;
 	case '/ajax/delete';
 		if(!isset($_SESSION['username'])) header('Location: /');
 		$load = 'pages/ajax_delete.php';
@@ -214,19 +209,6 @@ switch($request) {
 	case '/ajax/unfollow';
 		if(!isset($_SESSION['username'])) header('Location: /');
 		$load = 'pages/ajax_unfollow.php';
-		$raw = true;
-		break;
-	case '/sitemap.xml';
-		header('Content-Type: application/xml');
-		$load = 'pages/sitemap.php';
-		$raw = true;
-		break;
-	case '/widget';
-		if(!isset($_SESSION['username'])) {
-			$load = 'pages/widget-login.php';
-		} else {
-			$load = 'pages/widget.php';
-		}
 		$raw = true;
 		break;
 	case '/admin/become';
@@ -245,10 +227,27 @@ switch($request) {
 		}
 		$raw = true;
 		break;
+	case '/sitemap.xml';
+		header('Content-Type: application/xml');
+		$load = 'pages/sitemap.php';
+		$raw = true;
+		break;
+	case '/rss';
+		header('Content-Type: text/xml');
+		$load = 'pages/rss.php';
+		$raw = true;
+		break;
+	case '/widget';
+		if(!isset($_SESSION['username'])) {
+			$load = 'pages/widget-login.php';
+		} else {
+			$load = 'pages/widget.php';
+		}
+		$raw = true;
+		break;
 	case '/profile';
 		if(!preg_match("/[^0-9a-zA-Z\s]/", $_GET['user'])) {
-			$sql = mysqli_query($conn, "SELECT username, banned FROM `users` WHERE `username` = '".mysqli_real_escape_string($conn, $_GET['user'])."'");
-			$sql = mysqli_fetch_array($sql, MYSQLI_ASSOC);
+			$sql = mysqli_fetch_array(mysqli_query($conn, "SELECT username, banned FROM `users` WHERE `username` = '".mysqli_real_escape_string($conn, $_GET['user'])."'"), MYSQLI_ASSOC);
 			if(!empty($sql['username'])) {
 				if($sql['banned'] !== true) {
 					$title = $sql['username'];
@@ -288,7 +287,7 @@ if(isset($raw)) {
 		echo 'STATUS.RYSLIG.XYZ';
 	}
 	?></title>
-	<link href="/style.css?1" rel="stylesheet" type="text/css">
+	<link href="/style.css" rel="stylesheet" type="text/css">
 	<link rel="icon" href="/images/quill.gif" type="image/gif">
 	<link rel="shortcut icon" href="/images/quill.gif" type="image/gif">
 	<script src="/app.js"></script>
@@ -302,9 +301,9 @@ if(isset($raw)) {
 	}
 	if(isset($_SESSION['username']) or $load == 'pages/profile.php') {
 		if($load !== 'pages/profile.php') {
-			$theme = mysqli_fetch_array(mysqli_query($conn, "SELECT * FROM `users` WHERE `username` = '".$_SESSION['username']."'"), MYSQLI_ASSOC);
+			$theme = mysqli_fetch_array(mysqli_query($conn, "SELECT bg_color, text_color, meta_color, border_color, link_color FROM `users` WHERE `username` = '".$_SESSION['username']."'"), MYSQLI_ASSOC);
 		} else {
-			$theme = mysqli_fetch_array(mysqli_query($conn, "SELECT * FROM `users` WHERE `username` = '".$_GET['user']."'"), MYSQLI_ASSOC);
+			$theme = mysqli_fetch_array(mysqli_query($conn, "SELECT bg_color, text_color, meta_color, border_color, link_color FROM `users` WHERE `username` = '".$_GET['user']."'"), MYSQLI_ASSOC);
 		}
 		echo '<style type="text/css">
 		body, textarea {background-color: '.$theme['bg_color'].';color: '.$theme['text_color'].';}
