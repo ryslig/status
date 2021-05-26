@@ -5,7 +5,7 @@
 <title>STATUS.RYSLIG.XYZ</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body {font-family: Helvetica, Arial, sans-serif;font-size: 12px;margin: 10px;}
+body {font-family: sans-serif;font-size: 12px;margin: 10px;}
 </style>
 <?php
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
