@@ -46,8 +46,15 @@ function time_elapsed_string($datetime, $full = false) {
 }
 
 function place_links($message) {
-	$message = preg_replace("~(https?://(?:www\.)?[^\s]+)~i", '<a href="$1" target="_blank">$1</a>', $message);
-	$message = preg_replace('/@(\w+)/', '<a href="/profile?user=$1" target="_top">@$1</a>', $message);
+	if(preg_match("~(https?://(?:www\.)?[^\s]+)~i", $message, $matches)) {
+		if(strlen($matches['0']) > 55) {
+			$shortened = substr($matches['0'], 0, 50).'&hellip;';
+		} else {
+			$shortened = $matches['0'];
+		}
+		$message = preg_replace("~(https?://(?:www\.)?[^\s]+)~i", '<a href="'.$matches['0'].'" target="_blank">'.$shortened.'</a>', $message);
+	}
+	$message = preg_replace('/@(\w+)/', '<a href="/profile?user=$1">@$1</a>', $message);
 	return $message;
 }
 
