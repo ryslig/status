@@ -15,7 +15,7 @@ if(isset($_GET['user'])) {
 	echo '<?xml version="1.0" encoding="UTF-8"?>
 	<rss version="2.0">
 	<channel>
-	<title>'.strtoupper($_GET['user']).' :: STATUS.RYSLIG.XYZ</title>
+	<title>'.strtoupper($_GET['user']).'\'S PROFILE :: STATUS.RYSLIG.XYZ</title>
 	<link>http://status.ryslig.xyz/profile?user='.$_GET['user'].'</link>
 	<description>This is the description.</description>
 	<language>en-us</language>

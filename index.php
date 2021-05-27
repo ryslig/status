@@ -46,14 +46,7 @@ function time_elapsed_string($datetime, $full = false) {
 }
 
 function place_links($message) {
-	if(preg_match("~(https?://(?:www\.)?[^\s]+)~i", $message, $matches)) {
-		if(strlen($matches['0']) > 55) {
-			$shortened = substr($matches['0'], 0, 50).'&hellip;';
-		} else {
-			$shortened = $matches['0'];
-		}
-		$message = preg_replace("~(https?://(?:www\.)?[^\s]+)~i", '<a href="'.$matches['0'].'" target="_blank">'.$shortened.'</a>', $message);
-	}
+	$message = preg_replace("~(https?://(?:www\.)?[^\s]+)~i", '<a href="$1" target="_blank">$1</a>', $message);
 	$message = preg_replace('/@(\w+)/', '<a href="/profile?user=$1">@$1</a>', $message);
 	return $message;
 }
@@ -257,7 +250,7 @@ switch($request) {
 			$sql = mysqli_fetch_array(mysqli_query($conn, "SELECT username, banned FROM `users` WHERE `username` = '".mysqli_real_escape_string($conn, $_GET['user'])."'"), MYSQLI_ASSOC);
 			if(!empty($sql['username'])) {
 				if($sql['banned'] !== true) {
-					$title = $sql['username'];
+					$title = $sql['username']."'s Profile";
 					$load = 'pages/profile.php';
 					break;
 				}
@@ -297,7 +290,7 @@ if(isset($raw)) {
 	<link href="/style.css" rel="stylesheet" type="text/css">
 	<link rel="icon" href="/images/quill.gif" type="image/gif">
 	<link rel="shortcut icon" href="/images/quill.gif" type="image/gif">
-	<script src="/app.js"></script>
+	<script src="/app.js" type="text/javascript"></script>
 	<?php
 	if($load == "pages/profile.php") {
 		echo '<meta property="og:type" content="website">
@@ -344,7 +337,7 @@ if(isset($raw)) {
 					if($load == 'pages/profile.php') {
 						if($_SESSION['admin'] == true) {
 							if($_SESSION['username'] !== $_GET['user']) {
-								echo '<h2>admin tools</h2>
+								echo '<h2>admin tools:</h2>
 								<ul>
 								<li><a href="/admin/become?user='.$_GET['user'].'">Become User</a></li>
 								<li><a href="/admin/ban?user='.$_GET['user'].'">Ban Account</a></li>
