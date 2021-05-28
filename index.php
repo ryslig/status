@@ -295,8 +295,8 @@ if(isset($raw)) {
 	if($load == "pages/profile.php") {
 		echo '<meta property="og:type" content="website">
 		<meta property="og:site_name" content="status.ryslig.xyz">
-		<meta property="og:title" content="'.ucfirst($title)."'s Profile".'">
-		<meta property="og:image" content="http://status.ryslig.xyz/images/profiles/'.$title.'.gif">
+		<meta property="og:title" content="'.ucfirst($title).'">
+		<meta property="og:image" content="http://status.ryslig.xyz/images/profiles/'.$_GET['user'].'.gif">
 		<link rel="alternate" type="application/rss+xml" title="'.strtoupper($title).' :: STATUS.RYSLIG.XYZ" href="http://status.ryslig.xyz/rss?user='.$_GET['user'].'">';
 	}
 	if(isset($_SESSION['username']) or $load == 'pages/profile.php') {
@@ -335,15 +335,13 @@ if(isset($raw)) {
 				<br><br>
 				<?php
 					if($load == 'pages/profile.php') {
-						if($_SESSION['admin'] == true) {
-							if($_SESSION['username'] !== $_GET['user']) {
-								echo '<h2>admin tools:</h2>
-								<ul>
+						if($_SESSION['admin'] == true and $_SESSION['username'] !== $_GET['user']) {
+							echo '<h2>admin tools:</h2>
+							<ul>
 								<li><a href="/admin/become?user='.$_GET['user'].'">Become User</a></li>
 								<li><a href="/admin/ban?user='.$_GET['user'].'">Ban Account</a></li>
-								</ul>
-								<br><br>';
-							}
+							</ul>
+							<br><br>';
 						}
 					}
 				?>
