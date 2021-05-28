@@ -1,5 +1,5 @@
 <?php
-if(isset($_POST['status'])) {
+if($_SERVER{'REQUEST_METHOD'] == 'POST') {
 	if(isset($_SESSION['username'])) {
 		$status = trim($_POST['status']);
 		if(!empty($status)) {
@@ -12,7 +12,7 @@ if(isset($_POST['status'])) {
 						mysqli_query($conn, "INSERT INTO updates (author, status) VALUES ('".$_SESSION['username']."', '".mysqli_real_escape_string($conn, $status)."')");
 					} else { $_SESSION['alert'] = "Please wait 30 seconds before updating your status!"; }
 				} else { $_SESSION['alert'] = "Stop repeating yourself!";}
-			} else { $_SESSION['alert'] = "Your status must be longer than two characters"; }
+			} else { $_SESSION['alert'] = "Your status must be longer than two characters!"; }
 		} else { $_SESSION['alert'] = "We need something here."; }
 	} else { $_SESSION['alert'] = "We need something here."; }
 	header('Location: /home');
@@ -26,23 +26,19 @@ if(isset($_POST['status'])) {
 </form>
 <br><br>
 <?php
-switch($type) {
-	case 'mentions':
-		$timeline = get_timeline('mentions', $_GET['page']);
-		$header = "people who have mentioned you recently:";
-		break;
-	case 'public':
-		$timeline = get_timeline('public', $_GET['page']);
-		$header = "what everyone is doing:";
-		break;
-	default:
-		$header = "what your friends are doing:";
-		if($theme['home'] == 1) {
-			$timeline = get_timeline('timeline', $_GET['page']);
-		} else {
-			$timeline = get_timeline('currently', $_GET['page']);
-		}
-		break;
+if($type == 'mentions') {
+	$timeline = get_timeline('mentions', $_GET['page']);
+	$header = "people who have mentioned you recently:";
+} elseif($type == 'public') {
+	$timeline = get_timeline('public', $_GET['page']);
+	$header = "what everyone is doing:";
+} else {
+	$header = "what your friends are doing:";
+	if($theme['home'] == 1) {
+		$timeline = get_timeline('timeline', $_GET['page']);
+	} else {
+		$timeline = get_timeline('currently', $_GET['page']);
+	}
 }
 
 echo '<h2>'.$header.'</h2>
