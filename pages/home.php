@@ -1,5 +1,5 @@
 <?php
-if($_SERVER{'REQUEST_METHOD'] == 'POST') {
+if($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if(isset($_SESSION['username'])) {
 		$status = trim($_POST['status']);
 		if(!empty($status)) {
