@@ -21,7 +21,7 @@ if(isset($_GET['id'])) $timeline = get_timeline('permalink', null, null, intval(
 #this sucks
 
 if(!empty($timeline)) {
-	echo '<br><br><table cellpadding="10" width="700" cellspacing="0" align="center" class="timeline">';
+	echo '<br><br><table cellpadding="5" width="700" cellspacing="0" align="center" class="timeline">';
 	foreach($timeline['timeline'] as $status) {
 		$theme = mysqli_fetch_array(mysqli_query($conn, "SELECT bg_color, text_color, meta_color, border_color, link_color, home FROM `users` WHERE `username` = '".$status['author']['name']."'"), MYSQLI_ASSOC);
 		echo '<style type="text/css">

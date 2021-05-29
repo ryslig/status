@@ -117,7 +117,12 @@ function get_timeline($type, $page = 0, $user = false, $perma = false) {
 		$timeline['timeline'][$id]['author']['thumb'] = '/images/profiles/'.$row['author'].'.gif';
 		$timeline['timeline'][$id]['status'] = place_links(htmlspecialchars($row['status']));
 		$timeline['timeline'][$id]['status_raw'] = htmlspecialchars($row['status']);
-		$timeline['timeline'][$id]['date']['timeago'] = time_elapsed_string($row['date']);
+		if(strtotime($row['date']) < strtotime("-1 day")) {
+			$timeline['timeline'][$id]['date']['timeago'] = date("M jS g:i a", strtotime($row['date']));
+		} else {
+			
+			$timeline['timeline'][$id]['date']['timeago'] = time_elapsed_string($row['date']);
+		}
 		$timeline['timeline'][$id]['date']['timestamp'] = date("c", strtotime($row['date']));
 		$timeline['timeline'][$id]['date']['rss_timestamp'] = date(DATE_RFC822, strtotime($row['date']));
 		$timeline['timeline'][$id]['permalink'] = "//status.ryslig.xyz/permalink?id=".$id;
