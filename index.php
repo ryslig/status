@@ -93,8 +93,8 @@ function get_timeline($type, $page = 0, $user = false, $perma = false) {
 			$sql = "SELECT * FROM `updates` WHERE `id` IN (SELECT MAX(`id`) FROM `updates` GROUP BY `author`) AND `date` > DATE_SUB(NOW(), INTERVAL 7 DAY) AND `author` IN ('".implode("','", $following)."') ORDER BY CAST(id as SIGNED INTEGER) DESC";
 			break;
 		case 'mentions':
-			$sql = "SELECT * FROM `updates` WHERE `status` LIKE '%@".$_SESSION['username']."%' ORDER BY CAST(id as SIGNED INTEGER) DESC LIMIT 25";
-			$count = "SELECT COUNT(*) FROM `updates` WHERE `status` LIKE '%@".$_SESSION['username']."%'";
+			$sql = "SELECT * FROM `updates` WHERE `status` LIKE '%@".$_SESSION['username']."%' OR `reply` IN ('".implode("','", $posts)."') ORDER BY CAST(id as SIGNED INTEGER) DESC LIMIT 25";
+			$count = "SELECT COUNT(*) FROM `updates` WHERE `status` LIKE '%@".$_SESSION['username']."%' OR `reply` IN ('".implode("','", $posts)."')";
 			break;
 		case 'public':
 			$sql = "SELECT * FROM `updates` ORDER BY CAST(id as SIGNED INTEGER) DESC LIMIT ".$page*'25'.",25";
