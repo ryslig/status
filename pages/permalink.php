@@ -9,7 +9,7 @@
 	<!--[if IE]><style type="text/css">body { word-break: break-all; }</style><![endif]-->
 	<style>
 	.timeline {
-		font-size: 1.5em;
+		font-size: 1.4em;
 	}
 	</style>
 </head>
