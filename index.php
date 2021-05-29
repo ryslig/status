@@ -349,8 +349,9 @@ if(isset($_POST['status'])) {
 		echo '<style type="text/css">
 		body, textarea {background-color: '.$theme['bg_color'].';color: '.$theme['text_color'].';}
 		a {color: '.$theme['link_color'].';}
+		a, small a:hover {color: '.$theme['link_color'].';}
 		.alert {border: 1px solid '.$theme['link_color'].';}
-		label, q, small {color: '.$theme['meta_color'].';}
+		label, q, small, small a {color: '.$theme['meta_color'].';}
 		img.thumb, input[type=text], input[type=password], input[type=email], textarea, select {border: 1px solid '.$theme['border_color'].';}
 		</style>';
 	}
