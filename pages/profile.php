@@ -8,7 +8,12 @@ $profile = mysqli_fetch_array(mysqli_query($conn, "SELECT username, fullname, qu
 <div style="margin: 1em">
 	<?php
 		foreach($timeline['timeline'] as $status) {
-			echo '<p>'.$status['status'].' <small title="'.$status['date']['timestamp'].'">('.$status['date']['timeago'].')</small>';
+			echo '<p>'.$status['status'].' <small>(<a href="'.$status['permalink'].'">'.$status['date']['timeago'].'</a>';
+			if(isset($status['reply_to'])) {
+				echo ' <a href="'.$status['reply_to']['permalink'].'">in reply to '.$status['reply_to']['author'].'</a>';
+			}
+			echo ')</small>';
+			if($status['actions']['can_reply'] == true) echo '<img src="/images/icon_reply.gif" alt="Reply" title="Reply" onclick="reply(\''.$status['id'].'\')" width="16" height="16">';
 			if($status['actions']['can_delete'] == true) echo '<img src="/images/icon_delete.gif" onclick="delete_status(\''.$status['id'].'\')" width="16" height="16">';
 			'</p>';
 		}

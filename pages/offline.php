@@ -13,7 +13,11 @@
 		<td>
 			<strong><a href="'.$status['author']['link'].'">'.$status['author']['name'].'</a>:</strong>
 			'.$status['status'].'
-			<small title="'.$status['date']['timestamp'].'">('.$status['date']['timeago'].')</small>
+			<small>(<a href="'.$status['permalink'].'">'.$status['date']['timeago'].'</a>';
+			if(isset($status['reply_to'])) {
+				echo ' <a href="'.$status['reply_to']['permalink'].'">in reply to '.$status['reply_to']['author'].'</a>';
+			}
+			echo ')</small>
 		</td>
 		</tr>';
 	}

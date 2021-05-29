@@ -27,7 +27,7 @@ if(isset($_GET['user'])) {
 		<description>'.$status['status_raw'].'</description>
 		<pubDate>'.$status['date']['rss_timestamp'].'</pubDate>
 		<link>http://status.ryslig.xyz'.$status['author']['link'].'</link>
-		<guid isPermaLink="false">status_'.$status['id'].'</guid>
+		<guid>'.$status['permalink'].'</guid>
 		</item>';
 	}
 
@@ -51,7 +51,7 @@ if(isset($_GET['user'])) {
 		<description>'.$status['status_raw'].'</description>
 		<pubDate>'.$status['date']['rss_timestamp'].'</pubDate>
 		<link>http://status.ryslig.xyz'.$status['author']['link'].'</link>
-		<guid isPermaLink="false">status_'.$status['id'].'</guid>
+		<guid>http://status.ryslig.xyz'.$status['permalink'].'</guid>
 		</item>';
 	}
 

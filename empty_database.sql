@@ -35,6 +35,7 @@ CREATE TABLE `updates` (
   `author` varchar(16) NOT NULL,
   `status` varchar(140) NOT NULL,
   `date` timestamp NOT NULL DEFAULT current_timestamp()
+  `reply` int(11) DEFAULT NULL,
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `users` (

@@ -30,8 +30,9 @@ textarea {
 	padding: 0;
 }
 
-img[src="/images/icon_delete.gif"] {
+img[onclick] {
 	vertical-align: bottom;
+	cursor: pointer;
 }
 
 #sidebar ul {
@@ -78,6 +79,16 @@ ul.nav li.last:after {
 	margin: 0;
 }
 
+small a {
+	color: inherit;
+	text-decoration: none;
+}
+
+small a:hover {
+	color: blue;
+	text-decoration: underline;
+}
+
 /* DEFAULT COLORS */
 
 body {
@@ -86,6 +97,10 @@ body {
 }
 
 a {
+	color: blue;
+}
+
+small a:hover {
 	color: blue;
 }
 

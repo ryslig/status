@@ -51,7 +51,7 @@ function place_links($message) {
 	return $message;
 }
 
-function get_timeline($type, $page = 0, $user = false) {
+function get_timeline($type, $page = 0, $user = false, $perma = false) {
 	$page = intval($page);
 	if(isset($_SESSION['username'])) {
 		$sql = "SELECT following FROM follows WHERE follower = '".$_SESSION['username']."'";
@@ -85,6 +85,9 @@ function get_timeline($type, $page = 0, $user = false) {
 			$sql = "SELECT * FROM `updates` WHERE `author` = '".$user."' ORDER BY CAST(id as SIGNED INTEGER) DESC LIMIT ".$page*'25'.",25";
 			$count = "SELECT COUNT(*) FROM `updates` WHERE `author` = '".$user."'";
 			break;
+		case 'permalink':
+			$sql = "SELECT * FROM `updates` WHERE `id` = '".$perma."' LIMIT 1";
+			break;
 	}
 	$result = $GLOBALS['conn']->query($sql);
 	while($row = $result->fetch_assoc()) {
@@ -98,13 +101,23 @@ function get_timeline($type, $page = 0, $user = false) {
 		$timeline['timeline'][$id]['date']['timeago'] = time_elapsed_string($row['date']);
 		$timeline['timeline'][$id]['date']['timestamp'] = date("c", strtotime($row['date']));
 		$timeline['timeline'][$id]['date']['rss_timestamp'] = date(DATE_RFC822, strtotime($row['date']));
+		$timeline['timeline'][$id]['permalink'] = "https://status.ryslig.xyz/permalink?id=".$id;
+		if(!empty($row['reply'])) {
+			$reply = mysqli_fetch_array(mysqli_query($GLOBALS['conn'], "SELECT id, author FROM updates WHERE id = ".intval($row['reply'])), MYSQLI_ASSOC);
+			if(isset($reply)) {
+				$timeline['timeline'][$id]['reply_to']['author'] = $reply['author'];
+				$timeline['timeline'][$id]['reply_to']['permalink'] = "https://status.ryslig.xyz/permalink?id=".$row['reply'];
+			}
+		}
 		if(isset($_SESSION['username'])) {
+			$timeline['timeline'][$id]['actions']['can_reply'] = true;
 			if($_SESSION['username'] == $row['author']) {
 				$timeline['timeline'][$id]['actions']['can_delete'] = true;
 			} else {
 				$timeline['timeline'][$id]['actions']['can_delete'] = false;
 			}
 		} else {
+			$timeline['timeline'][$id]['actions']['can_reply'] = false;
 			$timeline['timeline'][$id]['actions']['can_delete'] = false;
 		}
 	}
@@ -245,6 +258,11 @@ switch($request) {
 		}
 		$raw = true;
 		break;
+	case '/permalink';
+		$title = "Permalink";
+		$load = "pages/permalink.php";
+		$raw = true;
+		break;
 	case '/profile';
 		if(!preg_match("/[^0-9a-zA-Z\s]/", $_GET['user'])) {
 			$sql = mysqli_fetch_array(mysqli_query($conn, "SELECT username, banned FROM `users` WHERE `username` = '".mysqli_real_escape_string($conn, $_GET['user'])."'"), MYSQLI_ASSOC);
@@ -274,6 +292,29 @@ if(isset($raw)) {
 	require $load;
 	exit;
 }
+
+if(isset($_POST['status'])) {
+	if(isset($_SESSION['username'])) {
+		$status = trim($_POST['status']);
+		if(!empty($status)) {
+			if(strlen($status) > 2) {
+				if($_SESSION['last_status'] !== $status) {
+					$query = mysqli_query($GLOBALS['conn'], "SELECT * FROM `updates` WHERE `date` > DATE_SUB(NOW(), INTERVAL 30 SECOND) AND `author` = '".$_SESSION['username']."';");
+					$rows = mysqli_num_rows($query);
+					if($rows == 0) {
+						$_SESSION['last_status'] = $status;
+						if(!empty($_POST['reply'])) {
+							mysqli_query($conn, "INSERT INTO updates (author, status, reply) VALUES ('".$_SESSION['username']."', '".mysqli_real_escape_string($conn, $status)."', '".intval($_POST['reply'])."')");
+						} else {
+							mysqli_query($conn, "INSERT INTO updates (author, status) VALUES ('".$_SESSION['username']."', '".mysqli_real_escape_string($conn, $status)."')");
+						}
+					} else { $_SESSION['alert'] = "Please wait 30 seconds before updating your status!"; }
+				} else { $_SESSION['alert'] = "Stop repeating yourself!";}
+			} else { $_SESSION['alert'] = "Your status must be longer than two characters!"; }
+		} else { $_SESSION['alert'] = "We need something here."; }
+	} else { $_SESSION['alert'] = "We need something here."; }
+	header('Location: '.$_SERVER['REQUEST_URI']);
+}
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
@@ -287,10 +328,10 @@ if(isset($raw)) {
 		echo 'STATUS.RYSLIG.XYZ';
 	}
 	?></title>
-	<link href="/style.css" rel="stylesheet" type="text/css">
+	<link href="/style.css?<?php echo rand(0, 1000); ?>" rel="stylesheet" type="text/css">
 	<link rel="icon" href="/images/quill.gif" type="image/gif">
 	<link rel="shortcut icon" href="/images/quill.gif" type="image/gif">
-	<script src="/app.js" type="text/javascript"></script>
+	<script src="/app.js?<?php echo rand(0, 1000); ?>" type="text/javascript"></script>
 	<?php
 	if($load == "pages/profile.php") {
 		echo '<meta property="og:type" content="website">
