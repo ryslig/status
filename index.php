@@ -52,7 +52,7 @@ function place_links($message) {
 			if(strlen($link) > 50) {
 				$visible_link = '<a href="'.$link.'" target="_blank">'.substr($link, 0, 45).'&hellip;</a>';
 			} else {
-				$visible_link = '<a href="'.$link.'" target="_blank">'.$link.' </a>';
+				$visible_link = '<a href="'.$link.'" target="_blank">'.$link.'</a>';
 			}
 			$message = str_replace($link, $visible_link, $message);
 		}
@@ -328,6 +328,7 @@ if(isset($_POST['status'])) {
 		} else { $_SESSION['alert'] = "We need something here."; }
 	} else { $_SESSION['alert'] = "We need something here."; }
 	header('Location: '.$_SERVER['REQUEST_URI']);
+	exit;
 }
 
 if(isset($raw)) {
