@@ -79,7 +79,7 @@ function get_timeline($type, $page = 0, $user = false, $perma = false) {
 			$count = "SELECT COUNT(*) FROM `updates` WHERE `author` IN ('".implode("','", $following)."') OR `reply` IN ('".implode("','", $posts)."')";
 			break;
 		case 'currently':
-			$sql = "SELECT * FROM `updates` WHERE `id` IN (SELECT MAX(`id`) FROM `updates` GROUP BY `author`) AND date > DATE_SUB(NOW(), INTERVAL 7 DAY) AND `author` IN ('".implode("','", $following)."') ORDER BY CAST(id as SIGNED INTEGER) DESC";
+			$sql = "SELECT * FROM `updates` WHERE `id` IN (SELECT MAX(`id`) FROM `updates` GROUP BY `author`) AND `date` > DATE_SUB(NOW(), INTERVAL 7 DAY) AND `author` IN ('".implode("','", $following)."') ORDER BY CAST(id as SIGNED INTEGER) DESC";
 			break;
 		case 'mentions':
 			$sql = "SELECT * FROM `updates` WHERE `status` LIKE '%@".$_SESSION['username']."%' ORDER BY CAST(id as SIGNED INTEGER) DESC LIMIT 25";
@@ -109,12 +109,12 @@ function get_timeline($type, $page = 0, $user = false, $perma = false) {
 		$timeline['timeline'][$id]['date']['timeago'] = time_elapsed_string($row['date']);
 		$timeline['timeline'][$id]['date']['timestamp'] = date("c", strtotime($row['date']));
 		$timeline['timeline'][$id]['date']['rss_timestamp'] = date(DATE_RFC822, strtotime($row['date']));
-		$timeline['timeline'][$id]['permalink'] = "https://status.ryslig.xyz/permalink?id=".$id;
+		$timeline['timeline'][$id]['permalink'] = "http://status.ryslig.xyz/permalink?id=".$id;
 		if(!empty($row['reply'])) {
-			$reply = mysqli_fetch_array(mysqli_query($GLOBALS['conn'], "SELECT id, author FROM updates WHERE id = ".intval($row['reply'])), MYSQLI_ASSOC);
+			$reply = mysqli_fetch_array(mysqli_query($GLOBALS['conn'], "SELECT `id`, `author` FROM `updates` WHERE `id` = ".intval($row['reply'])), MYSQLI_ASSOC);
 			if(isset($reply)) {
 				$timeline['timeline'][$id]['reply_to']['author'] = $reply['author'];
-				$timeline['timeline'][$id]['reply_to']['permalink'] = "https://status.ryslig.xyz/permalink?id=".$row['reply'];
+				$timeline['timeline'][$id]['reply_to']['permalink'] = "http://status.ryslig.xyz/permalink?id=".$row['reply'];
 			}
 		}
 		if(isset($_SESSION['username'])) {
@@ -296,11 +296,6 @@ if(isset($_SESSION['username'])) {
 	}
 }
 
-if(isset($raw)) {
-	require $load;
-	exit;
-}
-
 if(isset($_POST['status'])) {
 	if(isset($_SESSION['username'])) {
 		$status = trim($_POST['status']);
@@ -323,6 +318,11 @@ if(isset($_POST['status'])) {
 	} else { $_SESSION['alert'] = "We need something here."; }
 	header('Location: '.$_SERVER['REQUEST_URI']);
 }
+
+if(isset($raw)) {
+	require $load;
+	exit;
+}
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
@@ -336,11 +336,13 @@ if(isset($_POST['status'])) {
 		echo 'STATUS.RYSLIG.XYZ';
 	}
 	?></title>
-	<link href="/style.css?5292021" rel="stylesheet" type="text/css">
-	<link rel="icon" href="/images/quill.gif" type="image/gif">
-	<link rel="shortcut icon" href="/images/quill.gif" type="image/gif">
-	<script src="/app.js?5292021" type="text/javascript"></script>
+	<link href="/style.css?5292021_2" rel="stylesheet" type="text/css">
 	<?php
+	if(!strpos($_SERVER['HTTP_USER_AGENT'], "RetroZilla")) {
+		echo '<script src="/app.js?5292021_2" type="text/javascript"></script>';
+	} else {
+		echo '<script src="/app_retrozilla.js?5292021_2" type="text/javascript"></script>';
+	}
 	if($load == "pages/profile.php") {
 		echo '<meta property="og:type" content="website">
 		<meta property="og:site_name" content="status.ryslig.xyz">
@@ -427,6 +429,14 @@ if(isset($_POST['status'])) {
 			</td>
 		</tr>
 	</table>
+	<?php
+	if(strpos($_SERVER['HTTP_USER_AGENT'], "RetroZilla")) {
+		echo '<form method="post" action="/home" id="form_retrozilla">
+			<input type="hidden" name="status" id="status_retrozilla">
+			<input type="hidden" name="reply" id="id_retrozilla">
+		</form>';
+	}
+	?>
 	<!-- <?php $endtime = microtime(true); printf("Page loaded in %f seconds", $endtime - $starttime); ?> -->
 </body>
 </html>
