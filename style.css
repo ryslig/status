@@ -2,6 +2,7 @@ body {
 	font-family: Georgia, serif;
 	font-size: 13px;
 	word-break: break-word;
+	word-wrap: break-word;
 	margin: 0;
 	margin-bottom: 2em;
 }

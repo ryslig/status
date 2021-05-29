@@ -46,8 +46,19 @@ function time_elapsed_string($datetime, $full = false) {
 }
 
 function place_links($message) {
-	$message = preg_replace("~(https?://(?:www\.)?[^\s]+)~i", '<a href="$1" target="_blank">$1</a>', $message);
+	preg_match_all("~(https?://(?:www\.)?[^\s]+)~i", $message, $preg);
+	if(!empty($preg[0])) {
+		foreach($preg[0] as $link) {
+			if(strlen($link) > 50) {
+				$visible_link = '<a href="'.$link.'" target="_blank">'.substr($link, 0, 45).'&hellip;</a>';
+			} else {
+				$visible_link = '<a href="'.$link.'" target="_blank">'.$link.' </a>';
+			}
+			$message = str_replace($link, $visible_link, $message);
+		}
+	}
 	$message = preg_replace('/@(\w+)/', '<a href="/profile?user=$1">@$1</a>', $message);
+	unset($preg);
 	return $message;
 }
 
@@ -336,7 +347,7 @@ if(isset($raw)) {
 		echo 'STATUS.RYSLIG.XYZ';
 	}
 	?></title>
-	<link href="/style.css?5292021_2" rel="stylesheet" type="text/css">
+	<link href="/style.css?5292021_6" rel="stylesheet" type="text/css">
 	<?php
 	if(!strpos($_SERVER['HTTP_USER_AGENT'], "RetroZilla")) {
 		echo '<script src="/app.js?5292021_2" type="text/javascript"></script>';
@@ -369,7 +380,7 @@ if(isset($raw)) {
 	<!--[if IE]><style type="text/css">body { word-break: break-all; }</style><![endif]-->
 </head>
 <body>
-	<table width="700" align="center">
+	<table align="center" width="700">
 		<tr>
 			<td colspan="2">
 				<h1><a href="/">status.ryslig.xyz</a></h1>
