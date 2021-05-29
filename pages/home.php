@@ -42,16 +42,10 @@ if(!empty($timeline)) {
 			<strong><a href="'.$status['author']['link'].'">'.$status['author']['name'].'</a>:</strong>
 			'.$status['status'].'
 			<small>(<a href="'.$status['permalink'].'">'.$status['date']['timeago'].'</a>';
-			if(isset($status['reply_to'])) {
-				echo ' <a href="'.$status['reply_to']['permalink'].'">in reply to '.$status['reply_to']['author'].'</a>';
-			}
+			if(isset($status['reply_to'])) echo ' <a href="'.$status['reply_to']['permalink'].'">in reply to '.$status['reply_to']['author'].'</a>';
 			echo ')</small>';
-			if($status['actions']['can_reply'] == true) {
-				echo '<img src="/images/icon_reply.gif" alt="Reply" title="Reply" onclick="reply(\''.$status['id'].'\')" width="16" height="16">';
-			}
-			if($status['actions']['can_delete'] == true) {
-				echo '<img src="/images/icon_delete.gif" alt="Delete" title="Delete" onclick="delete_status(\''.$status['id'].'\')" width="16" height="16">';
-			}
+			if($status['actions']['can_reply'] == true) echo '<img src="/images/icon_reply.gif" alt="Reply" title="Reply" onclick="reply(\''.$status['id'].'\')" width="16" height="16">';
+			if($status['actions']['can_delete'] == true) echo '<img src="/images/icon_delete.gif" alt="Delete" title="Delete" onclick="delete_status(\''.$status['id'].'\')" width="16" height="16">';
 		echo '</td></tr>';
 	}
 	echo '</table><br>';

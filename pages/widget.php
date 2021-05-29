@@ -13,6 +13,8 @@ hr {border: 0;border-bottom: 1px dashed '.$theme['border_color'].';}
 p {margin: 4px 8px;}
 small {color: '.$theme['meta_color'].';}
 a {color: '.$theme['link_color'].';}
+small a {text-decoration: none;color: inherit;}
+small a:hover {text-decoration: underline;color: '.$theme['link_color'].';}
 </style>';
 ?>
 </head>
@@ -43,8 +45,12 @@ if(isset($_POST['status'])) {
 </form>
 <?php
 $timeline = get_timeline('timeline');
-foreach($timeline['timeline'] as $status) echo '<hr>
-<p><strong>'.$status['author']['name'].':</strong> '.$status['status'].' <small>('.$status['date']['timeago'].')</small></p>';
+foreach($timeline['timeline'] as $status) {
+	echo '<hr><p><strong><a href="'.$status['author']['link'].'" target="_blank">'.$status['author']['name'].'</a>:</strong> '.$status['status'].' <small>(<a href="'.$status['permalink'].'" target="_blank">'.$status['date']['timeago'].'</a>';
+	if(isset($status['reply_to'])) echo ' <a href="'.$status['reply_to']['permalink'].'" target="_blank">in reply to '.$status['reply_to']['author'].'</a>';
+	echo ')</small></p>';
+}
+
 ?>
 </body>
 </html>
