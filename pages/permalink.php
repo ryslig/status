@@ -1,9 +1,12 @@
+<?php
+if(isset($_GET['id'])) $timeline = get_timeline('permalink', null, null, intval($_GET['id']));
+?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>PERMALINK :: STATUS.RYSLIG.XYZ</title>
+	<title><?php echo $timeline['timeline'][$_GET['id']]['author']['name'].': '.$timeline['timeline'][$_GET['id']]['status_raw']; ?></title>
 	<link href="/style.css" rel="stylesheet" type="text/css">
 	<script src="/app.js" type="text/javascript"></script>
 	<!--[if IE]><style type="text/css">body { word-break: break-all; }</style><![endif]-->
@@ -17,8 +20,6 @@
 <?php
 #this sucks
 
-if(isset($_GET['id'])) $timeline = get_timeline('permalink', null, null, $_GET['id']);
-	
 if(!empty($timeline)) {
 	echo '<br><br><table cellpadding="10" width="700" cellspacing="0" align="center" class="timeline">';
 	foreach($timeline['timeline'] as $status) {

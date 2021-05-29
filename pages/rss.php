@@ -26,7 +26,7 @@ if(isset($_GET['user'])) {
 		<title>'.$status['author']['name'].': '.$status['status_raw'].'</title>
 		<description>'.$status['status_raw'].'</description>
 		<pubDate>'.$status['date']['rss_timestamp'].'</pubDate>
-		<link>http://status.ryslig.xyz'.$status['author']['link'].'</link>
+		<link>'.$status['permalink'].'</link>
 		<guid>'.$status['permalink'].'</guid>
 		</item>';
 	}
@@ -48,10 +48,10 @@ if(isset($_GET['user'])) {
 	foreach($timeline['timeline'] as $status) {
 		echo '<item>
 		<title>'.$status['author']['name'].': '.$status['status_raw'].'</title>
-		<description>'.$status['status_raw'].'</description>
+		<description>'.$status['status'].'</description>
 		<pubDate>'.$status['date']['rss_timestamp'].'</pubDate>
-		<link>http://status.ryslig.xyz'.$status['author']['link'].'</link>
-		<guid>http://status.ryslig.xyz'.$status['permalink'].'</guid>
+		<link>'.$status['permalink'].'</link>
+		<guid>'.$status['permalink'].'</guid>
 		</item>';
 	}
 

@@ -109,12 +109,12 @@ function get_timeline($type, $page = 0, $user = false, $perma = false) {
 		$timeline['timeline'][$id]['date']['timeago'] = time_elapsed_string($row['date']);
 		$timeline['timeline'][$id]['date']['timestamp'] = date("c", strtotime($row['date']));
 		$timeline['timeline'][$id]['date']['rss_timestamp'] = date(DATE_RFC822, strtotime($row['date']));
-		$timeline['timeline'][$id]['permalink'] = "http://status.ryslig.xyz/permalink?id=".$id;
+		$timeline['timeline'][$id]['permalink'] = "//status.ryslig.xyz/permalink?id=".$id;
 		if(!empty($row['reply'])) {
 			$reply = mysqli_fetch_array(mysqli_query($GLOBALS['conn'], "SELECT `id`, `author` FROM `updates` WHERE `id` = ".intval($row['reply'])), MYSQLI_ASSOC);
 			if(isset($reply)) {
 				$timeline['timeline'][$id]['reply_to']['author'] = $reply['author'];
-				$timeline['timeline'][$id]['reply_to']['permalink'] = "http://status.ryslig.xyz/permalink?id=".$row['reply'];
+				$timeline['timeline'][$id]['reply_to']['permalink'] = "//status.ryslig.xyz/permalink?id=".$row['reply'];
 			}
 		}
 		if(isset($_SESSION['username'])) {
@@ -384,7 +384,7 @@ if(isset($raw)) {
 						require 'pages/sidebar_offline.php';
 					}
 				?>
-				<br><br>
+				<br>
 				<?php
 					if($load == 'pages/profile.php') {
 						if($_SESSION['admin'] == true and $_SESSION['username'] !== $_GET['user']) {
@@ -393,7 +393,7 @@ if(isset($raw)) {
 								<li><a href="/admin/become?user='.$_GET['user'].'">Become User</a></li>
 								<li><a href="/admin/ban?user='.$_GET['user'].'">Ban Account</a></li>
 							</ul>
-							<br><br>';
+							<br>';
 						}
 					}
 				?>

@@ -5,7 +5,7 @@
 	<li><a href="/settings">Settings</a></li>
 	<li><a href="/signout">Sign Out</a></li>
 </ul>
-<br><br>
+<br>
 <h2>statistics:</h2>
 <ul>
 	<li>Updates: <?php echo mysqli_num_rows(mysqli_query($conn, "SELECT * FROM updates WHERE author = '".$_SESSION['username']."'")); ?></li>
