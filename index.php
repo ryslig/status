@@ -328,10 +328,10 @@ if(isset($_POST['status'])) {
 		echo 'STATUS.RYSLIG.XYZ';
 	}
 	?></title>
-	<link href="/style.css?<?php echo rand(0, 1000); ?>" rel="stylesheet" type="text/css">
+	<link href="/style.css?5292021" rel="stylesheet" type="text/css">
 	<link rel="icon" href="/images/quill.gif" type="image/gif">
 	<link rel="shortcut icon" href="/images/quill.gif" type="image/gif">
-	<script src="/app.js?<?php echo rand(0, 1000); ?>" type="text/javascript"></script>
+	<script src="/app.js?5292021" type="text/javascript"></script>
 	<?php
 	if($load == "pages/profile.php") {
 		echo '<meta property="og:type" content="website">
