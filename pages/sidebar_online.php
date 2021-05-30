@@ -6,9 +6,14 @@
 	<li><a href="/signout">Sign Out</a></li>
 </ul>
 <br>
+<?php
+$stats['updates'] = mysqli_fetch_array(mysqli_query($conn, "SELECT COUNT(*) FROM updates WHERE author = '".$_SESSION['username']."'"));
+$stats['following'] = mysqli_fetch_array(mysqli_query($conn, "SELECT COUNT(*) FROM follows WHERE follower = '".$_SESSION['username']."'"));
+$stats['mentions'] = mysqli_fetch_array(mysqli_query($conn, "SELECT COUNT(*) FROM updates WHERE status LIKE '%@".$_SESSION['username']."%'"));
+?>
 <h2>statistics:</h2>
 <ul>
-	<li>Updates: <?php echo mysqli_num_rows(mysqli_query($conn, "SELECT * FROM updates WHERE author = '".$_SESSION['username']."'")); ?></li>
-	<li>Following: <?php echo mysqli_num_rows(mysqli_query($conn, "SELECT * FROM follows WHERE follower = '".$_SESSION['username']."'")); ?></li>
-	<li>Mentions: <?php echo mysqli_num_rows(mysqli_query($conn, "SELECT * FROM updates WHERE status LIKE '%@".$_SESSION['username']."%'")); ?></li>
+	<li>Updates: <?php echo $stats['updates']['0']; ?></li>
+	<li>Following: <?php echo $stats['following']['0']; ?></li>
+	<li>Mentions: <?php echo $stats['mentions']['0']; ?></li>
 </ul>

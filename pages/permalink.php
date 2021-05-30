@@ -42,7 +42,7 @@ if(!empty($timeline)) {
 			'.$status['status'].'
 			<small>(<a href="'.$status['permalink'].'">'.$status['date']['timeago'].'</a>';
 			if(isset($status['reply_to'])) echo ' <a href="'.$status['reply_to']['permalink'].'">in reply to '.$status['reply_to']['author'].'</a>';
-			echo ')</small>';
+			echo ')</small> ';
 			if($status['actions']['can_reply'] == true) {
 				echo '<img src="/images/icon_reply.gif" alt="Reply" title="Reply" onclick="reply(\''.$status['id'].'\')" width="16" height="16">';
 			}
