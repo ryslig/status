@@ -1,19 +1,9 @@
-<h2>what are you doing? <small id="counter">140</small></h2>
+<h2>what are you doing? <small><span id="counter">140</span></small></h2>
 <form method="post" action="/home">
 	<textarea name="status" id="status" maxlength="140" oninput="count_it()" autocomplete="off" rows="3"></textarea>
 	<br><br>
 	<input type="submit" value="update">
 </form>
-<script>
-function count_it() {
-    document.getElementById('counter').innerHTML = 140 - document.getElementById('status').value.length;
-	if(document.getElementById('status').value.length > 140) {
-		document.getElementById('counter').style.color = "red";
-	} else {
-		document.getElementById('counter').style.color = "<?php echo $theme['meta_color']; ?>";
-	}
-}
-</script>
 <br><br>
 <?php
 if($type == 'mentions') {

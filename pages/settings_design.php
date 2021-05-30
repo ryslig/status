@@ -72,14 +72,3 @@ $user_info = mysqli_fetch_array(mysqli_query($conn, "SELECT * FROM `users` WHERE
 		</tr>
 	</table>
 </form>
-<script>
-function reset_theme() {
-	if (confirm("Are you sure you want to reset your theme colors?")) {
-		document.getElementById("bg_color").value = "#FFFFFF";
-		document.getElementById("text_color").value = "#000000";
-		document.getElementById("meta_color").value = "#808080";
-		document.getElementById("border_color").value = "#D3D3D3";
-		document.getElementById("link_color").value = "#0000FF";
-	}
-}
-</script>

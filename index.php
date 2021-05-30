@@ -350,7 +350,7 @@ if(isset($raw)) {
 	}
 	?></title>
 	<link href="/style.css?5292021_6" rel="stylesheet" type="text/css">
-	<script src="/app.js?5302021_1" type="text/javascript"></script>
+	<script src="/app.js?5302021_2" type="text/javascript"></script>
 	<?php
 	if($load == "pages/profile.php") {
 		echo '<meta property="og:type" content="website">
@@ -441,8 +441,8 @@ if(isset($raw)) {
 	<?php
 	if(strpos($_SERVER['HTTP_USER_AGENT'], "RetroZilla")) {
 		echo '<form method="post" action="/home" id="form_retrozilla">
-			<input type="hidden" name="status" id="status_retrozilla">
-			<input type="hidden" name="reply" id="id_retrozilla">
+		<input type="hidden" name="status" id="status_retrozilla">
+		<input type="hidden" name="reply" id="id_retrozilla">
 		</form>';
 	}
 	?>

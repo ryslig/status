@@ -68,3 +68,22 @@ function unfollow_user(user) {
 		location.reload();
 	}
 }
+
+function count_it() {
+	document.getElementById('counter').innerHTML = 140 - document.getElementById('status').value.length;
+	if(document.getElementById('status').value.length > 140) {
+		document.getElementById('counter').style.color = "red";
+	} else {
+		document.getElementById('counter').style.color = "inherit";
+	}
+}
+
+function reset_theme() {
+	if (confirm("Are you sure you want to reset your theme colors?")) {
+		document.getElementById("bg_color").value = "#FFFFFF";
+		document.getElementById("text_color").value = "#000000";
+		document.getElementById("meta_color").value = "#808080";
+		document.getElementById("border_color").value = "#D3D3D3";
+		document.getElementById("link_color").value = "#0000FF";
+	}
+}
