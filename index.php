@@ -65,16 +65,15 @@ function place_links($message) {
 function get_timeline($type, $page = 0, $user = false, $perma = false) {
 	$page = intval($page);
 	if(isset($_SESSION['username'])) {
-		$sql = "SELECT following FROM follows WHERE follower = '".$_SESSION['username']."'";
+		$sql = "SELECT `following` FROM `follows` WHERE `follower` = '".$_SESSION['username']."'";
 		$following = array();
 		if(mysqli_num_rows(mysqli_query($GLOBALS['conn'], $sql)) !== 0) {
 			$result = $GLOBALS['conn']->query($sql);
 			while($row = $result->fetch_assoc()) array_push($following, $row['following']);
 		}
 		array_push($following, $_SESSION['username']);
-	}
-	if(isset($_SESSION['username'])) {
-		$sql = "SELECT id FROM updates WHERE author = '".$_SESSION['username']."'";
+		#oh fuck
+		$sql = "SELECT `id` FROM `updates` WHERE `author` = '".$_SESSION['username']."'";
 		$posts = array();
 		if(mysqli_num_rows(mysqli_query($GLOBALS['conn'], $sql)) !== 0) {
 			$result = $GLOBALS['conn']->query($sql);
@@ -87,7 +86,7 @@ function get_timeline($type, $page = 0, $user = false, $perma = false) {
 			break;
 		case 'timeline':
 			$sql = "SELECT * FROM `updates` WHERE `author` IN ('".implode("','", $following)."') OR `reply` IN ('".implode("','", $posts)."') OR `status` LIKE '%@".$_SESSION['username']."%' ORDER BY CAST(id as SIGNED INTEGER) DESC LIMIT ".$page*'25'.",25";
-			$count = "SELECT COUNT(*) FROM `updates` WHERE `author` IN ('".implode("','", $following)."') OR `reply` IN ('".implode("','", $posts)."')";
+			$count = "SELECT COUNT(*) FROM `updates` WHERE `author` IN ('".implode("','", $following)."') OR `reply` IN ('".implode("','", $posts)."') OR `status` LIKE '%@".$_SESSION['username']."%' ";
 			break;
 		case 'currently':
 			$sql = "SELECT * FROM `updates` WHERE `id` IN (SELECT MAX(`id`) FROM `updates` GROUP BY `author`) AND `date` > DATE_SUB(NOW(), INTERVAL 7 DAY) AND `author` IN ('".implode("','", $following)."') ORDER BY CAST(id as SIGNED INTEGER) DESC";
@@ -120,7 +119,6 @@ function get_timeline($type, $page = 0, $user = false, $perma = false) {
 		if(strtotime($row['date']) < strtotime("-1 day")) {
 			$timeline['timeline'][$id]['date']['timeago'] = date("M jS g:i a", strtotime($row['date']));
 		} else {
-			
 			$timeline['timeline'][$id]['date']['timeago'] = time_elapsed_string($row['date']);
 		}
 		$timeline['timeline'][$id]['date']['timestamp'] = date("c", strtotime($row['date']));
@@ -168,9 +166,7 @@ function get_timeline($type, $page = 0, $user = false, $perma = false) {
 	}
 }
 
-$request = preg_replace("/\?(.*)/", "", $_SERVER['REQUEST_URI']);
-
-switch($request) {
+switch(preg_replace("/\?(.*)/", "", $_SERVER['REQUEST_URI'])) {
 	case '/':
 		if(isset($_SESSION['username'])) header('Location: /home');
 		$load = 'pages/offline.php';
@@ -289,7 +285,7 @@ switch($request) {
 		break;
 	case '/profile';
 		if(!preg_match("/[^0-9a-zA-Z\s]/", $_GET['user'])) {
-			$sql = mysqli_fetch_array(mysqli_query($conn, "SELECT username, banned FROM `users` WHERE `username` = '".mysqli_real_escape_string($conn, $_GET['user'])."'"), MYSQLI_ASSOC);
+			$sql = mysqli_fetch_array(mysqli_query($conn, "SELECT `username`, `banned` FROM `users` WHERE `username` = '".mysqli_real_escape_string($conn, $_GET['user'])."'"), MYSQLI_ASSOC);
 			if(!empty($sql['username'])) {
 				if($sql['banned'] !== true) {
 					$title = $sql['username']."'s Profile";
@@ -306,7 +302,7 @@ switch($request) {
 }
 
 if(isset($_SESSION['username'])) {
-	if(mysqli_num_rows(mysqli_query($conn, "SELECT username FROM users WHERE username = '".$_SESSION['username']."' and banned = 0")) == 0) {
+	if(mysqli_num_rows(mysqli_query($conn, "SELECT `username` FROM `users` WHERE `username` = '".$_SESSION['username']."' and `banned` = 0")) == 0) {
 		require 'pages/signout.php';
 		exit;
 	}
@@ -318,7 +314,7 @@ if(isset($_POST['status'])) {
 		if(!empty($status)) {
 			if(strlen($status) > 2) {
 				if($_SESSION['last_status'] !== $status) {
-					$query = mysqli_query($GLOBALS['conn'], "SELECT * FROM `updates` WHERE `date` > DATE_SUB(NOW(), INTERVAL 30 SECOND) AND `author` = '".$_SESSION['username']."';");
+					$query = mysqli_query($GLOBALS['conn'], "SELECT `id` FROM `updates` WHERE `date` > DATE_SUB(NOW(), INTERVAL 30 SECOND) AND `author` = '".$_SESSION['username']."';");
 					$rows = mysqli_num_rows($query);
 					if($rows == 0) {
 						$_SESSION['last_status'] = $status;
@@ -354,12 +350,8 @@ if(isset($raw)) {
 	}
 	?></title>
 	<link href="/style.css?5292021_6" rel="stylesheet" type="text/css">
+	<script src="/app.js?5302021_1" type="text/javascript"></script>
 	<?php
-	if(!strpos($_SERVER['HTTP_USER_AGENT'], "RetroZilla")) {
-		echo '<script src="/app.js?5292021_2" type="text/javascript"></script>';
-	} else {
-		echo '<script src="/app_retrozilla.js?5292021_2" type="text/javascript"></script>';
-	}
 	if($load == "pages/profile.php") {
 		echo '<meta property="og:type" content="website">
 		<meta property="og:site_name" content="status.ryslig.xyz">
@@ -417,7 +409,7 @@ if(isset($raw)) {
 				<h2>latest users:</h2>
 				<ul>
 				<?php
-					$sql = "SELECT username, fullname FROM users WHERE banned != 1 ORDER BY date DESC LIMIT 6";
+					$sql = "SELECT `username`, `fullname` FROM users WHERE banned != 1 ORDER BY `date` DESC LIMIT 6";
 					$result = $conn->query($sql);
 					while($row = $result->fetch_assoc()) {
 						echo '<li><a href="/profile?user='.$row['username'].'">'.htmlspecialchars($row['fullname']).'</a></li>';
