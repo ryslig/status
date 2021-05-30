@@ -3,7 +3,7 @@ if(navigator.userAgent.indexOf("RetroZilla") !== -1) {
 } else {
 	if (window.XMLHttpRequest) {
 		xhttp = new XMLHttpRequest();
-	} else if(ActiveXObject("Microsoft.XMLHTTP")) {
+	} else {
 		xhttp = new ActiveXObject("Microsoft.XMLHTTP");
 	}
 }
