@@ -89,7 +89,7 @@ function get_timeline($type, $page = 0, $user = false, $perma = false) {
 			$count = "SELECT COUNT(*) FROM `updates` WHERE `author` IN ('".implode("','", $following)."') OR `reply` IN ('".implode("','", $posts)."') OR `status` LIKE '%@".$_SESSION['username']."%' ";
 			break;
 		case 'currently':
-			$sql = "SELECT * FROM `updates` WHERE `id` IN (SELECT MAX(`id`) FROM `updates` GROUP BY `author`) AND `date` > DATE_SUB(NOW(), INTERVAL 7 DAY) AND `author` IN ('".implode("','", $following)."') ORDER BY CAST(id as SIGNED INTEGER) DESC";
+			$sql = "SELECT * FROM `updates` WHERE `id` IN (SELECT MAX(`id`) FROM `updates` GROUP BY `author`) AND `date` > DATE_SUB(NOW(), INTERVAL 1 WEEK) AND `author` IN ('".implode("','", $following)."') AND `reply` IS NULL ORDER BY CAST(id as SIGNED INTEGER) DESC";
 			break;
 		case 'mentions':
 			$sql = "SELECT * FROM `updates` WHERE `status` LIKE '%@".$_SESSION['username']."%' OR `reply` IN ('".implode("','", $posts)."') ORDER BY CAST(id as SIGNED INTEGER) DESC LIMIT 25";
@@ -350,7 +350,7 @@ if(isset($raw)) {
 	}
 	?></title>
 	<link href="/style.css?5292021_6" rel="stylesheet" type="text/css">
-	<script src="/app.js?5302021_2" type="text/javascript"></script>
+	<script src="/app.js?5302021_4" type="text/javascript"></script>
 	<?php
 	if($load == "pages/profile.php") {
 		echo '<meta property="og:type" content="website">
@@ -395,15 +395,13 @@ if(isset($raw)) {
 				?>
 				<br>
 				<?php
-					if($load == 'pages/profile.php') {
-						if($_SESSION['admin'] == true and $_SESSION['username'] !== $_GET['user']) {
-							echo '<h2>admin tools:</h2>
-							<ul>
-								<li><a href="/admin/become?user='.$_GET['user'].'">Become User</a></li>
-								<li><a href="/admin/ban?user='.$_GET['user'].'">Ban Account</a></li>
-							</ul>
-							<br>';
-						}
+					if($load == 'pages/profile.php' && $_SESSION['admin'] == true && $_SESSION['username'] !== $_GET['user']) {
+						echo '<h2>admin tools:</h2>
+						<ul>
+							<li><a href="/admin/become?user='.$_GET['user'].'">Become User</a></li>
+							<li><a href="/admin/ban?user='.$_GET['user'].'">Ban Account</a></li>
+						</ul>
+						<br>';
 					}
 				?>
 				<h2>latest users:</h2>
@@ -439,10 +437,10 @@ if(isset($raw)) {
 		</tr>
 	</table>
 	<?php
-	if(strpos($_SERVER['HTTP_USER_AGENT'], "RetroZilla")) {
-		echo '<form method="post" action="/home" id="form_retrozilla">
-		<input type="hidden" name="status" id="status_retrozilla">
-		<input type="hidden" name="reply" id="id_retrozilla">
+	if(strpos($_SERVER['HTTP_USER_AGENT'], "RetroZilla") or strpos($_SERVER['HTTP_USER_AGENT'], "MSIE")) {
+		echo '<form method="post" action="/home" id="form_legacy">
+		<input type="hidden" name="status" id="status_legacy">
+		<input type="hidden" name="reply" id="id_legacy">
 		</form>';
 	}
 	?>

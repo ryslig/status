@@ -1,11 +1,11 @@
 if(navigator.userAgent.indexOf("RetroZilla") !== -1) {
-	var retrozilla = true;
+	var legacy = true;
+} else if(window.XMLHttpRequest) {
+	xhttp = new XMLHttpRequest();
+} else if(ActiveXObject("Microsoft.XMLHTTP")) {
+	xhttp = new ActiveXObject("Microsoft.XMLHTTP");
 } else {
-	if (window.XMLHttpRequest) {
-		xhttp = new XMLHttpRequest();
-	} else {
-		xhttp = new ActiveXObject("Microsoft.XMLHTTP");
-	}
+	var legacy = true;
 }
 
 function ajax_popup(loc) {
@@ -14,8 +14,8 @@ function ajax_popup(loc) {
 }
 	
 function delete_status(id) {
-	if (confirm("Are you sure you want to delete your status?")) {
-		if(retrozilla == true) {
+	if(confirm("Are you sure you want to delete your status?")) {
+		if(legacy == true) {
 			ajax_popup("/ajax/delete?id="+id);
 		} else {
 			xhttp.open("GET", "/ajax/delete?id="+id, false);
@@ -30,10 +30,10 @@ function reply(id) {
 	if(update == null || update == "") {
 		// user cancelled the promt
 	} else {
-		if(retrozilla == true) {
-			document.getElementById('status_retrozilla').value = update;
-			document.getElementById('id_retrozilla').value = id;
-			document.getElementById("form_retrozilla").submit();
+		if(legacy == true) {
+			document.getElementById('status_legacy').value = update;
+			document.getElementById('id_legacy').value = id;
+			document.getElementById("form_legacy").submit();
 		} else {
 			// setting up post request
 			data = new FormData();
@@ -48,7 +48,7 @@ function reply(id) {
 }
 
 function follow_user(user) {
-	if(retrozilla == true) {
+	if(legacy == true) {
 		ajax_popup("/ajax/follow?user="+user);
 	} else {
 		xhttp.open("GET", "/ajax/follow?user="+user, false);
@@ -58,8 +58,8 @@ function follow_user(user) {
 }
 
 function unfollow_user(user) {
-	if (confirm("Are you sure you want to unfollow this user?")) {
-		if(retrozilla == true) {
+	if(confirm("Are you sure you want to unfollow this user?")) {
+		if(legacy == true) {
 			ajax_popup("/ajax/unfollow?user="+user);
 		} else {
 			xhttp.open("GET", "/ajax/unfollow?user="+user, false);
@@ -79,7 +79,7 @@ function count_it() {
 }
 
 function reset_theme() {
-	if (confirm("Are you sure you want to reset your theme colors?")) {
+	if(confirm("Are you sure you want to reset your theme colors?")) {
 		document.getElementById("bg_color").value = "#FFFFFF";
 		document.getElementById("text_color").value = "#000000";
 		document.getElementById("meta_color").value = "#808080";
