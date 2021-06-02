@@ -71,7 +71,7 @@ ul.nav {
 }
 
 ul.nav li:after {
-	content: '-';
+	content: '|';
 	margin: 0 5px;
 }
 
