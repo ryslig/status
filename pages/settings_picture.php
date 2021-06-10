@@ -9,6 +9,7 @@ if(isset($_FILES['thumb']['size'])) {
 					if($mime !== 'image/gif') {
 						if($mime == 'image/jpeg') $image = imagecreatefromjpeg($_FILES['thumb']['tmp_name']);
 						if($mime == 'image/png') $image = imagecreatefrompng($_FILES['thumb']['tmp_name']);
+						$image = imagescale($image, 100);
 						imagegif($image, $destination);
 						$_SESSION['alert'] = "Image successfully updated!";
 					} else {

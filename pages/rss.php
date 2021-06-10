@@ -48,7 +48,7 @@ if(isset($_GET['user'])) {
 	foreach($timeline['timeline'] as $status) {
 		echo '<item>
 		<title>'.$status['author']['name'].': '.$status['status_raw'].'</title>
-		<description>'.$status['status'].'</description>
+		<description>'.$status['status_raw'].'</description>
 		<pubDate>'.$status['date']['rss_timestamp'].'</pubDate>
 		<link>'.$status['permalink'].'</link>
 		<guid>'.$status['permalink'].'</guid>
