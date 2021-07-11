@@ -73,7 +73,7 @@ function get_timeline($type, $page = 0, $user = false, $perma = false) {
 			$count = "SELECT COUNT(*) FROM `updates` WHERE `author` IN (SELECT following FROM follows WHERE follower = '".$_SESSION['username']."') OR `author` = '".$_SESSION['username']."' OR `reply` IN (SELECT id FROM updates WHERE author = '".$_SESSION['username']."') OR `status` LIKE '%@".$_SESSION['username']."%'";
 			break;
 		case 'currently':
-			$sql = "SELECT * FROM `updates` WHERE `id` IN (SELECT MAX(`id`) FROM `updates` GROUP BY `author`) AND `date` > DATE_SUB(NOW(), INTERVAL 1 WEEK) AND `author` IN (SELECT following FROM follows WHERE follower = '".$_SESSION['username']."') OR `author` = '".$_SESSION['username']."' ORDER BY CAST(id as SIGNED INTEGER) DESC";
+			$sql = "SELECT * FROM `updates` WHERE `id` IN (SELECT MAX(`id`) FROM `updates` WHERE `author` IN (SELECT following FROM follows WHERE follower = '".$_SESSION['username']."') OR `author` = '".$_SESSION['username']."' GROUP BY `author`) AND `date` > DATE_SUB(NOW(), INTERVAL 1 WEEK) ORDER BY CAST(id as SIGNED INTEGER) DESC";
 			break;
 		case 'mentions':
 			$sql = "SELECT * FROM `updates` WHERE `status` LIKE '%@".$_SESSION['username']."%' OR `reply` IN (SELECT id FROM updates WHERE author = '".$_SESSION['username']."') ORDER BY CAST(id as SIGNED INTEGER) DESC LIMIT ".$page*'25'.",25";
