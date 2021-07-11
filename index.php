@@ -64,36 +64,20 @@ function place_links($message) {
 
 function get_timeline($type, $page = 0, $user = false, $perma = false) {
 	$page = intval($page);
-	if(isset($_SESSION['username'])) {
-		$sql = "SELECT `following` FROM `follows` WHERE `follower` = '".$_SESSION['username']."'";
-		$following = array();
-		if(mysqli_num_rows(mysqli_query($GLOBALS['conn'], $sql)) !== 0) {
-			$result = $GLOBALS['conn']->query($sql);
-			while($row = $result->fetch_assoc()) array_push($following, $row['following']);
-		}
-		array_push($following, $_SESSION['username']);
-		#oh fuck
-		$sql = "SELECT `id` FROM `updates` WHERE `author` = '".$_SESSION['username']."'";
-		$posts = array();
-		if(mysqli_num_rows(mysqli_query($GLOBALS['conn'], $sql)) !== 0) {
-			$result = $GLOBALS['conn']->query($sql);
-			while($row = $result->fetch_assoc()) array_push($posts, $row['id']);
-		}
-	}
 	switch($type) {
 		case 'offline':
 			$sql = "SELECT * FROM `updates` ORDER BY CAST(id as SIGNED INTEGER) DESC LIMIT 10";
 			break;
 		case 'timeline':
-			$sql = "SELECT * FROM `updates` WHERE `author` IN ('".implode("','", $following)."') OR `reply` IN ('".implode("','", $posts)."') OR `status` LIKE '%@".$_SESSION['username']."%' ORDER BY CAST(id as SIGNED INTEGER) DESC LIMIT ".$page*'25'.",25";
-			$count = "SELECT COUNT(*) FROM `updates` WHERE `author` IN ('".implode("','", $following)."') OR `reply` IN ('".implode("','", $posts)."') OR `status` LIKE '%@".$_SESSION['username']."%' ";
+			$sql = "SELECT * FROM `updates` WHERE `author` IN (SELECT following FROM follows WHERE follower = '".$_SESSION['username']."') OR `author` = '".$_SESSION['username']."' OR `reply` IN (SELECT id FROM updates WHERE author = '".$_SESSION['username']."') OR `status` LIKE '%@".$_SESSION['username']."%' ORDER BY CAST(id as SIGNED INTEGER) DESC LIMIT ".$page*'25'.",25";
+			$count = "SELECT COUNT(*) FROM `updates` WHERE `author` IN (SELECT following FROM follows WHERE follower = '".$_SESSION['username']."') OR `author` = '".$_SESSION['username']."' OR `reply` IN (SELECT id FROM updates WHERE author = '".$_SESSION['username']."') OR `status` LIKE '%@".$_SESSION['username']."%'";
 			break;
 		case 'currently':
-			$sql = "SELECT * FROM `updates` WHERE `id` IN (SELECT MAX(`id`) FROM `updates` GROUP BY `author`) AND `date` > DATE_SUB(NOW(), INTERVAL 1 WEEK) AND `author` IN ('".implode("','", $following)."') AND `reply` IS NULL ORDER BY CAST(id as SIGNED INTEGER) DESC";
+			$sql = "SELECT * FROM `updates` WHERE `id` IN (SELECT MAX(`id`) FROM `updates` GROUP BY `author`) AND `date` > DATE_SUB(NOW(), INTERVAL 1 WEEK) AND `author` IN (SELECT following FROM follows WHERE follower = '".$_SESSION['username']."') OR `author` = '".$_SESSION['username']."' ORDER BY CAST(id as SIGNED INTEGER) DESC";
 			break;
 		case 'mentions':
-			$sql = "SELECT * FROM `updates` WHERE `status` LIKE '%@".$_SESSION['username']."%' OR `reply` IN ('".implode("','", $posts)."') ORDER BY CAST(id as SIGNED INTEGER) DESC LIMIT ".$page*'25'.",25";
-			$count = "SELECT COUNT(*) FROM `updates` WHERE `status` LIKE '%@".$_SESSION['username']."%' OR `reply` IN ('".implode("','", $posts)."')";
+			$sql = "SELECT * FROM `updates` WHERE `status` LIKE '%@".$_SESSION['username']."%' OR `reply` IN (SELECT id FROM updates WHERE author = '".$_SESSION['username']."') ORDER BY CAST(id as SIGNED INTEGER) DESC LIMIT ".$page*'25'.",25";
+			$count = "SELECT COUNT(*) FROM `updates` WHERE `status` LIKE '%@".$_SESSION['username']."%' OR `reply` IN (SELECT id FROM updates WHERE author = '".$_SESSION['username']."')";
 			break;
 		case 'public':
 			$sql = "SELECT * FROM `updates` ORDER BY CAST(id as SIGNED INTEGER) DESC LIMIT ".$page*'25'.",25";
@@ -104,7 +88,7 @@ function get_timeline($type, $page = 0, $user = false, $perma = false) {
 			$count = "SELECT COUNT(*) FROM `updates` WHERE `author` = '".$user."'";
 			break;
 		case 'permalink':
-			$sql = "SELECT * FROM `updates` WHERE `id` = '".$perma."' LIMIT 1";
+			$sql = "SELECT * FROM `updates` WHERE `id` = '".intval($perma)."' LIMIT 1";
 			break;
 	}
 	$result = $GLOBALS['conn']->query($sql);
