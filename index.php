@@ -334,7 +334,7 @@ if(isset($raw)) {
 	}
 	?></title>
 	<link href="/style.css?5292021_6" rel="stylesheet" type="text/css">
-	<script src="/app.js?5302021_4" type="text/javascript"></script>
+	<script src="/app.js?07142021_2" type="text/javascript"></script>
 	<?php
 	if($load == "pages/profile.php") {
 		echo '<meta property="og:type" content="website">
@@ -345,9 +345,9 @@ if(isset($raw)) {
 	}
 	if(isset($_SESSION['username']) or $load == 'pages/profile.php') {
 		if($load !== 'pages/profile.php') {
-			$theme = mysqli_fetch_array(mysqli_query($conn, "SELECT bg_color, text_color, meta_color, border_color, link_color, home FROM `users` WHERE `username` = '".$_SESSION['username']."'"), MYSQLI_ASSOC);
+			$theme = mysqli_fetch_array(mysqli_query($conn, "SELECT bg_color, text_color, meta_color, border_color, link_color, highlight_color, home FROM `users` WHERE `username` = '".$_SESSION['username']."'"), MYSQLI_ASSOC);
 		} else {
-			$theme = mysqli_fetch_array(mysqli_query($conn, "SELECT bg_color, text_color, meta_color, border_color, link_color, home FROM `users` WHERE `username` = '".$_GET['user']."'"), MYSQLI_ASSOC);
+			$theme = mysqli_fetch_array(mysqli_query($conn, "SELECT bg_color, text_color, meta_color, border_color, link_color, highlight_color, home FROM `users` WHERE `username` = '".$_GET['user']."'"), MYSQLI_ASSOC);
 		}
 		echo '<style type="text/css">
 		body, textarea {background-color: '.$theme['bg_color'].';color: '.$theme['text_color'].';}
@@ -356,6 +356,7 @@ if(isset($raw)) {
 		.alert {border: 1px solid '.$theme['link_color'].';}
 		label, q, small, small a {color: '.$theme['meta_color'].';}
 		img.thumb, input[type=text], input[type=password], input[type=email], textarea, select {border: 1px solid '.$theme['border_color'].';}
+		tr.mention {background-color: '.$theme['highlight_color'].';}
 		</style>';
 	}
 	?>

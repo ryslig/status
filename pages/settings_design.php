@@ -12,8 +12,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 			if(color_valid($_POST['meta_color']) == true) {
 				if(color_valid($_POST['border_color']) == true) {
 					if(color_valid($_POST['link_color']) == true) {
-						mysqli_query($conn, "UPDATE users SET bg_color = '".$_POST['bg_color']."', text_color = '".$_POST['text_color']."', meta_color = '".$_POST['meta_color']."', border_color = '".$_POST['border_color']."', link_color = '".$_POST['link_color']."', home = '".intval($_POST['homepage_style'])."' WHERE username = '".$_SESSION['username']."'");
-						$_SESSION['alert'] = "Changes saved!";
+						if(color_valid($_POST['highlight_color']) == true) {
+							mysqli_query($conn, "UPDATE users SET bg_color = '".$_POST['bg_color']."', text_color = '".$_POST['text_color']."', meta_color = '".$_POST['meta_color']."', border_color = '".$_POST['border_color']."', link_color = '".$_POST['link_color']."', highlight_color = '".$_POST['highlight_color']."', home = '".intval($_POST['homepage_style'])."' WHERE username = '".$_SESSION['username']."'");
+							$_SESSION['alert'] = "Changes saved!";
+						}
 					}
 				}
 			}
@@ -46,6 +48,10 @@ $user_info = mysqli_fetch_array(mysqli_query($conn, "SELECT * FROM `users` WHERE
 		<tr>
 			<td align="right"><label for="link_color">Accent Color:</label></td>
 			<td><input type="color" name="link_color" id="link_color" value="<?php echo $user_info['link_color']; ?>"></td>
+		</tr>
+		<tr>
+			<td align="right"><label for="highlight_color">Highlight Color:</label></td>
+			<td><input type="color" name="highlight_color" id="highlight_color" value="<?php echo $user_info['highlight_color']; ?>"></td>
 		</tr>
 		<tr>
 			<td colspan="2">&nbsp;</td>

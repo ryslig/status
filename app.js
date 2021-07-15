@@ -2,8 +2,6 @@ if(navigator.userAgent.indexOf("RetroZilla") !== -1) {
 	var legacy = true;
 } else if(window.XMLHttpRequest) {
 	xhttp = new XMLHttpRequest();
-} else if(ActiveXObject("Microsoft.XMLHTTP")) {
-	xhttp = new ActiveXObject("Microsoft.XMLHTTP");
 } else {
 	var legacy = true;
 }
@@ -27,23 +25,26 @@ function delete_status(id) {
 
 function reply(id) {
 	var update = prompt("What would you like to reply with?");
-	if(update == null || update == "") {
-		// user cancelled the promt
-	} else {
-		if(legacy == true) {
-			document.getElementById('status_legacy').value = update;
-			document.getElementById('id_legacy').value = id;
-			document.getElementById("form_legacy").submit();
+	if(update != null && update != "") {
+		if(update.length <= 140) {
+			if(legacy == true) {
+				document.getElementById('status_legacy').value = update;
+				document.getElementById('id_legacy').value = id;
+				document.getElementById("form_legacy").submit();
+			} else {
+				// setting up post request
+				data = new FormData();
+				data.set('status', update);
+				data.set('reply', id);
+				// send it, bruh!!
+				xhttp.open("POST", '/home', false);
+				xhttp.send(data);
+				location.reload();
+			}
 		} else {
-			// setting up post request
-			data = new FormData();
-			data.set('status', update);
-			data.set('reply', id);
-			// send it, bruh!!
-			xhttp.open("POST", '/home', false);
-			xhttp.send(data);
-			location.reload();
-		}
+			alert("Your reply is longer than 140 characters.");
+			reply(id);
+		}	
 	}
 }
 
@@ -85,5 +86,6 @@ function reset_theme() {
 		document.getElementById("meta_color").value = "#808080";
 		document.getElementById("border_color").value = "#D3D3D3";
 		document.getElementById("link_color").value = "#0000FF";
+		document.getElementById("highlight_color").value = "#EEEEFF";
 	}
 }

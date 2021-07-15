@@ -4,7 +4,7 @@
 	<br><br>
 	<input type="submit" value="update">
 </form>
-<br><br>
+<br><br>	
 <?php
 if($type == 'mentions') {
 	$timeline = get_timeline('mentions', $_GET['page']);
@@ -32,8 +32,12 @@ echo '<h2>'.$header.'</h2>
 if(!empty($timeline)) {
 	echo '<table cellpadding="5" cellspacing="0" width="100%" class="timeline">';
 	foreach($timeline['timeline'] as $status) {
-		echo '<tr>
-		<td width="49">
+		if(((isset($status['reply_to']) && $status['reply_to']['author'] == $_SESSION['username']) || strpos($status['status'], "@".$_SESSION['username']) !== false) && $type !== "mentions") {
+			echo '<tr class="mention">';
+		} else { 
+			echo '<tr>';
+		}
+		echo '<td width="49">
 			<a href="'.$status['author']['link'].'">
 				<img src="'.$status['author']['thumb'].'" width="45" height="45" class="thumb" alt="'.$status['author']['name'].'">
 			</a>
