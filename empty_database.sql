@@ -50,6 +50,7 @@ CREATE TABLE `users` (
   `meta_color` varchar(7) NOT NULL DEFAULT '#808080',
   `border_color` varchar(7) NOT NULL DEFAULT '#d3d3d3',
   `link_color` varchar(7) NOT NULL DEFAULT '#0000ff',
+  `highlight_color` varchar(7) NOT NULL DEFAULT '#eeeeff',
   `home` int(11) NOT NULL DEFAULT '0',
   `admin` int(11) NOT NULL DEFAULT '0',
   `banned` int(11) NOT NULL DEFAULT '0'
