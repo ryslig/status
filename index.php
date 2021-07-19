@@ -395,26 +395,36 @@ if(isset($raw)) {
 	require $load;
 	exit;
 }
+
+if(isset($title)) {
+	$title = strtoupper($title).' :: STATUS.RYSLIG.XYZ';
+} else {
+	$title = 'STATUS.RYSLIG.XYZ';
+}
+
+if($load == "pages/permalink.php") {
+	if(mysqli_fetch_array($conn->query("SELECT COUNT(*) FROM updates WHERE id = ".intval($_GET['id'])))[0] == 0) {
+		http_response_code(404);
+		exit;
+	} else {
+		$sql = mysqli_fetch_array($conn->query("SELECT * FROM updates WHERE id = ".intval($_GET['id'])));
+		$title = $sql['author'].": ".htmlspecialchars($sql['status']);
+	}
+}
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title><?php
-	if(isset($title)) {
-		echo strtoupper($title).' :: STATUS.RYSLIG.XYZ';
-	} else {
-		echo 'STATUS.RYSLIG.XYZ';
-	}
-	?></title>
+	<title><?php echo $title; ?></title>
 	<link href="/style.css?5292021_6" rel="stylesheet" type="text/css">
 	<script src="/app.js?07142021_2" type="text/javascript"></script>
+	<meta property="og:site_name" content="status.ryslig.xyz">
+	<meta property="og:type" content="website">
+	<meta property="og:title" content="<?php echo $title; ?>">
 	<?php
 	if($load == "pages/profile.php") {
-		echo '<meta property="og:type" content="website">'.
-		'<meta property="og:site_name" content="status.ryslig.xyz">'.
-		'<meta property="og:title" content="'.strtoupper($title).'">';
 		if(file_exists("./images/profiles/".$_GET['user'].".gif")) {
 			echo '<meta property="og:image" content="http://status.ryslig.xyz/images/profiles/'.$_GET['user'].'.gif">';
 		}
