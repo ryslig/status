@@ -6,6 +6,6 @@
 			"pass" => "",
 			"db" => "status"
 		],
-		"brb" => false
+		"debug" => true
 	];
 ?>

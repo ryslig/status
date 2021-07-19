@@ -40,15 +40,10 @@ function reply(id) {
 </form>
 <hr class="first">
 <?php
-$timeline = get_timeline('timeline');
-foreach($timeline['timeline'] as $status) {
-	echo '<p><strong><a href="'.$status['author']['link'].'" target="_blank">'.$status['author']['name'].'</a>:</strong> '.$status['status'].' <small>(<a href="'.$status['permalink'].'" target="_blank">'.$status['date']['timeago'].'</a>';
-	if(isset($status['reply_to'])) echo ' <a href="'.$status['reply_to']['permalink'].'" target="_blank">in reply to '.$status['reply_to']['author'].'</a>';
-	echo ')</small>';
-	if($status['actions']['can_reply'] == true) echo ' <img src="/images/icon_reply_small.gif" alt="Reply" title="Reply" onclick="reply(\''.$status['id'].'\')" width="10" height="10">';
-	echo '</p><hr>';
-}
-
+$timeline = new Timeline;
+$timeline->type = "timeline";
+$timeline->paging = false;
+$timeline->display(2);
 ?>
 <br>
 </body>
