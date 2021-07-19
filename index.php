@@ -66,7 +66,13 @@ class Timeline {
 						echo ' class="mention"';
 					}
 				}
-				echo '><td width="49"><a href="/profile?user='.$status['author'].'"><img src="/images/profiles/'.$status['author'].'.gif" width="45" height="45" class="thumb" alt="'.$status['author'].'"></a></td><td><strong><a href="/profile?user='.$status['author'].'">'.$status['author'].'</a>:</strong> '.$this->place_links(htmlspecialchars($status['status'])).' <small>(<a href="/permalink?id='.$status['id'].'">'.$this->time_elapsed_string($status['date']).'</a>';
+				echo '><td width="49"><a href="/profile?user='.$status['author'].'">';
+				if(file_exists("./images/profiles/".$status['author'].".gif")) {
+					echo '<img src="/images/profiles/'.$status['author'].'.gif" width="45" height="45" class="thumb" alt="'.$status['author'].'">';
+				} else {
+					echo '<img src="/images/default.gif" width="45" height="45" class="thumb" alt="'.$status['author'].'">';
+				}
+				echo '</a></td><td><strong><a href="/profile?user='.$status['author'].'">'.$status['author'].'</a>:</strong> '.$this->place_links(htmlspecialchars($status['status'])).' <small>(<a href="/permalink?id='.$status['id'].'">'.$this->time_elapsed_string($status['date']).'</a>';
 				if(isset($status['reply'])) echo ' <a href="/permalink?id='.$status['reply'].'">in reply to '.mysqli_fetch_array($GLOBALS['conn']->query("SELECT author FROM updates WHERE id = ".$status['reply']))['author'].'</a>';
 				echo ')</small> ';
 				if(isset($_SESSION['username'])) {
@@ -408,9 +414,11 @@ if(isset($raw)) {
 	if($load == "pages/profile.php") {
 		echo '<meta property="og:type" content="website">'.
 		'<meta property="og:site_name" content="status.ryslig.xyz">'.
-		'<meta property="og:title" content="'.ucfirst($title).'">'.
-		'<meta property="og:image" content="http://status.ryslig.xyz/images/profiles/'.$_GET['user'].'.gif">'.
-		'<link rel="alternate" type="application/rss+xml" title="'.strtoupper($title).' :: STATUS.RYSLIG.XYZ" href="http://status.ryslig.xyz/rss?user='.$_GET['user'].'">';
+		'<meta property="og:title" content="'.strtoupper($title).'">';
+		if(file_exists("./images/profiles/".$_GET['user'].".gif")) {
+			echo '<meta property="og:image" content="http://status.ryslig.xyz/images/profiles/'.$_GET['user'].'.gif">';
+		}
+		echo '<link rel="alternate" type="application/rss+xml" title="'.strtoupper($title).' :: STATUS.RYSLIG.XYZ" href="http://status.ryslig.xyz/rss?user='.$_GET['user'].'">';
 	}
 	if(isset($_SESSION['username']) or $load == 'pages/profile.php' or $load == 'pages/permalink.php') {
 		if($load == 'pages/profile.php') {

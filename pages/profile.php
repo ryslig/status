@@ -10,7 +10,13 @@ $timeline->display(1);
 ?></div>
 </td>
 <td width="100" align="center" valign="top">
-<a href="/images/profiles/<?php echo $profile['username'] ?>.gif"><img src="/images/profiles/<?php echo $profile['username'] ?>.gif" width="70" height="70" alt="<?php echo $profile['username'] ?>" class="thumb"></a>
+<?php
+if(file_exists("./images/profiles/".$profile['username'].".gif")) {
+	echo '<a href="/images/profiles/'.$profile['username'].'.gif"><img src="/images/profiles/'.$profile['username'].'.gif" width="70" height="70" alt="'.$profile['username'].'" class="thumb"></a>';
+} else {
+	echo '<img src="/images/default.gif" width="70" height="70" alt="'.$profile['username'].'" class="thumb">';
+}
+?>
 <h2><?php
 if(!empty($profile['website'])): echo '<a href="'.htmlspecialchars($profile['website']).'">'.htmlspecialchars($profile['fullname']).'</a>';
 else: echo htmlspecialchars($profile['fullname']);
