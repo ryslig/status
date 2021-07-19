@@ -60,43 +60,40 @@ class Timeline {
 			foreach($GLOBALS['conn']->query($sql) as $status) {
 				echo '<tr';
 				if(isset($status['reply']) && $this->type == "timeline" && mysqli_fetch_array($GLOBALS['conn']->query("SELECT author FROM updates WHERE id = ".$status['reply']))['author'] == $_SESSION['username']) echo ' class="mention"'; 
-				echo '><td width="49"><a href="/profile?user='.$status['author'].'"><img src="/images/profiles/'.$status['author'].'.gif" width="45" height="45" class="thumb" alt="'.$status['author'].'"></a></td>'.
-				'<td><strong><a href="/profile?user='.$status['author'].'">'.$status['author'].'</a>:</strong> '.$this->place_links(htmlspecialchars($status['status'])).' <small>(<a href="/permalink?id='.$status['id'].'">';
-				if(strtotime($status['date']) < strtotime("-1 day")): echo date("M jS g:i a", strtotime($status['date']));
-				else: echo $this->time_elapsed_string($status['date']);
-				endif;
-				echo '</a>';
+				echo '><td width="49"><a href="/profile?user='.$status['author'].'"><img src="/images/profiles/'.$status['author'].'.gif" width="45" height="45" class="thumb" alt="'.$status['author'].'"></a></td><td><strong><a href="/profile?user='.$status['author'].'">'.$status['author'].'</a>:</strong> '.$this->place_links(htmlspecialchars($status['status'])).' <small>(<a href="/permalink?id='.$status['id'].'">'.$this->time_elapsed_string($status['date']).'</a>';
 				if(isset($status['reply'])) echo ' <a href="/permalink?id='.$status['reply'].'">in reply to '.mysqli_fetch_array($GLOBALS['conn']->query("SELECT author FROM updates WHERE id = ".$status['reply']))['author'].'</a>';
 				echo ')</small> ';
-				if(isset($_SESSION['username'])) echo '<img src="/images/icon_reply.gif" alt="Reply" title="Reply" onclick="reply(\''.$status['id'].'\')" width="16" height="16">';
-				if(isset($_SESSION['username']) && $_SESSION['username'] == $status['author']) echo '<img src="/images/icon_delete.gif" alt="Delete" title="Delete" onclick="delete_status(\''.$status['id'].'\')" width="16" height="16">';
+				if(isset($_SESSION['username'])) {
+					echo '<img src="/images/icon_reply.gif" alt="Reply" title="Reply" onclick="reply(\''.$status['id'].'\')" width="16" height="16">';
+					if($_SESSION['username'] == $status['author']) {
+						echo '<img src="/images/icon_delete.gif" alt="Delete" title="Delete" onclick="delete_status(\''.$status['id'].'\')" width="16" height="16">';
+					}
+				}
 				echo '</td></tr>';
 			}
 			echo '</table>';
 		} elseif($format == 1) {
 			foreach($GLOBALS['conn']->query($sql) as $status) {
-				echo '<p>'.$this->place_links(htmlspecialchars($status['status'])).' <small>(<a href="/permalink?id='.$status['id'].'">';
-				if(strtotime($status['date']) < strtotime("-1 day")): echo date("M jS g:i a", strtotime($status['date']));
-				else: echo $this->time_elapsed_string($status['date']);
-				endif;
-				echo '</a>';
+				echo '<p>'.$this->place_links(htmlspecialchars($status['status'])).' <small>(<a href="/permalink?id='.$status['id'].'">'.$this->time_elapsed_string($status['date']).'</a>';
 				if(isset($status['reply'])) echo ' <a href="/permalink?id='.$status['reply'].'">in reply to '.mysqli_fetch_array($GLOBALS['conn']->query("SELECT author FROM updates WHERE id = ".$status['reply']))['author'].'</a>';
 				echo ')</small>';
-				if(isset($_SESSION['username'])) echo '<img src="/images/icon_reply.gif" alt="Reply" title="Reply" onclick="reply(\''.$status['id'].'\')" width="16" height="16">';
-				if(isset($_SESSION['username']) && $_SESSION['username'] == $status['author']) echo '<img src="/images/icon_delete.gif" alt="Delete" title="Delete" onclick="delete_status(\''.$status['id'].'\')" width="16" height="16">';
+				if(isset($_SESSION['username'])) {
+					echo '<img src="/images/icon_reply.gif" alt="Reply" title="Reply" onclick="reply(\''.$status['id'].'\')" width="16" height="16">';
+					if($_SESSION['username'] == $status['author']) {
+						echo '<img src="/images/icon_delete.gif" alt="Delete" title="Delete" onclick="delete_status(\''.$status['id'].'\')" width="16" height="16">';
+					}
+				}
 				'</p>';
 			}
 			echo "<br>";
 		} elseif($format == 2) {
 			foreach($GLOBALS['conn']->query($sql) as $status) {
-				echo '<p><strong><a href="/profile?user='.$status['author'].'" target="_blank">'.$status['author'].'</a>:</strong> '.$this->place_links(htmlspecialchars($status['status'])).' <small>(<a href="/permalink?id='.$status['id'].'" target="_blank">';
-				if(strtotime($status['date']) < strtotime("-1 day")): echo date("M jS g:i a", strtotime($status['date']));
-				else: echo $this->time_elapsed_string($status['date']);
-				endif;
-				echo '</a>';
+				echo '<p><strong><a href="/profile?user='.$status['author'].'" target="_blank">'.$status['author'].'</a>:</strong> '.$this->place_links(htmlspecialchars($status['status'])).' <small>(<a href="/permalink?id='.$status['id'].'" target="_blank">'.$this->time_elapsed_string($status['date']).'</a>';
 				if(isset($status['reply'])) echo ' <a href="/permalink?id='.$status['reply'].'">in reply to '.mysqli_fetch_array($GLOBALS['conn']->query("SELECT author FROM updates WHERE id = ".$status['reply']))['author'].'</a>';
 				echo ')</small>';
-				if(isset($_SESSION['username'])) echo ' <img src="/images/icon_reply_small.gif" alt="Reply" title="Reply" onclick="reply(\''.$status['id'].'\')" width="10" height="10">';
+				if(isset($_SESSION['username'])) {
+					echo ' <img src="/images/icon_reply_small.gif" alt="Reply" title="Reply" onclick="reply(\''.$status['id'].'\')" width="10" height="10">';
+				}
 				echo '</p><hr>';
 			}
 		} elseif($format == 4) {
@@ -106,6 +103,7 @@ class Timeline {
 				"<description>".htmlspecialchars($status['status'])."</description>".
 				"<pubDate>".date(DATE_RFC822, strtotime($status['date']))."</pubDate>".
 				"<link>//status.ryslig.xyz/permalink?id=".$status['id']."</link>".
+				"<author><name>".$status['author']."</name></author>".
 				"<guid>//status.ryslig.xyz/permalink?id=".$status['id']."</guid>".
 				"</item>";
 			}
@@ -127,23 +125,29 @@ class Timeline {
 		}
 	}
 	private function time_elapsed_string($datetime, $full = false) {
-		$now = new DateTime;
-		$ago = new DateTime($datetime);
-		$diff = $now->diff($ago);
+		if(strtotime($datetime) < strtotime("-1 day")) {
+			return date("M jS g:i a", strtotime($datetime));
+		} else {
+			$now = new DateTime;
+			$ago = new DateTime($datetime);
+			$diff = $now->diff($ago);
 
-		$diff->w = floor($diff->d / 7);
-		$diff->d -= $diff->w * 7;
+			$diff->w = floor($diff->d / 7);
+			$diff->d -= $diff->w * 7;
 
-		$string = array('y' => 'year', 'm' => 'month', 'w' => 'week', 'd' => 'day', 'h' => 'hour', 'i' => 'minute', 's' => 'second',);
-		
-		foreach ($string as $k => &$v) {
-			if ($diff->$k) : $v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 's' : '');
-			else : unset($string[$k]);
-			endif;
+			$string = array('y' => 'year', 'm' => 'month', 'w' => 'week', 'd' => 'day', 'h' => 'hour', 'i' => 'minute', 's' => 'second',);
+			
+			foreach ($string as $k => &$v) {
+				if ($diff->$k) {
+					$v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 's' : '');
+				} else {
+					unset($string[$k]);
+				}
+			}
+
+			if (!$full) $string = array_slice($string, 0, 1);
+			return $string ? implode(', ', $string) . ' ago' : 'just now';
 		}
-
-		if (!$full) $string = array_slice($string, 0, 1);
-		return $string ? implode(', ', $string) . ' ago' : 'just now';
 	}
 	private function place_links($message) {
 		preg_match_all("~(https?://(?:www\.)?[^\s]+)~i", $message, $preg);
