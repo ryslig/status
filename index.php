@@ -59,7 +59,13 @@ class Timeline {
 			echo '<table cellpadding="5" cellspacing="0" width="100%" class="timeline">';
 			foreach($GLOBALS['conn']->query($sql) as $status) {
 				echo '<tr';
-				if(isset($status['reply']) && $this->type == "timeline" && mysqli_fetch_array($GLOBALS['conn']->query("SELECT author FROM updates WHERE id = ".$status['reply']))['author'] == $_SESSION['username']) echo ' class="mention"'; 
+				if($this->type == "timeline") {
+					if(isset($status['reply']) && mysqli_fetch_array($GLOBALS['conn']->query("SELECT author FROM updates WHERE id = ".$status['reply']))['author'] == $_SESSION['username']) {
+						echo ' class="mention"';
+					} elseif(strpos($status['status'], $_SESSION['username'])) {
+						echo ' class="mention"';
+					}
+				}
 				echo '><td width="49"><a href="/profile?user='.$status['author'].'"><img src="/images/profiles/'.$status['author'].'.gif" width="45" height="45" class="thumb" alt="'.$status['author'].'"></a></td><td><strong><a href="/profile?user='.$status['author'].'">'.$status['author'].'</a>:</strong> '.$this->place_links(htmlspecialchars($status['status'])).' <small>(<a href="/permalink?id='.$status['id'].'">'.$this->time_elapsed_string($status['date']).'</a>';
 				if(isset($status['reply'])) echo ' <a href="/permalink?id='.$status['reply'].'">in reply to '.mysqli_fetch_array($GLOBALS['conn']->query("SELECT author FROM updates WHERE id = ".$status['reply']))['author'].'</a>';
 				echo ')</small> ';
