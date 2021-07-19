@@ -175,36 +175,56 @@ class Timeline {
 
 switch(preg_replace("/\?(.*)/", "", $_SERVER['REQUEST_URI'])) {
 	case '/':
-		if(isset($_SESSION['username'])) header('Location: /home');
+		if(isset($_SESSION['username'])) {
+			header('Location: /home');
+		}
 		$load = 'pages/offline.php';
 		break;
 	case '/signup':
-		if(isset($_SESSION['username'])) header('Location: /home');
+		if(isset($_SESSION['username'])) {
+			http_response_code(403);
+			header('Location: /');
+		}
 		$title = 'Sign Up';
 		$load = 'pages/signup.php';
 		break;
 	case '/signin':
-		if(isset($_SESSION['username'])) header('Location: /home');
+		if(isset($_SESSION['username'])) {
+			http_response_code(403);
+			header('Location: /');
+		}
 		$title = 'Sign In';
 		$load = 'pages/signin.php';
 		break;
 	case '/signout':
-		if(!isset($_SESSION['username'])) header('Location: /');
+		if(!isset($_SESSION['username'])) {
+			http_response_code(403);
+			header('Location: /');
+		}
 		$load = 'pages/signout.php';
 		break;
 	case '/home':
-		if(!isset($_SESSION['username'])) header('Location: /');
+		if(!isset($_SESSION['username'])) {
+			http_response_code(403);
+			header('Location: /');
+		}
 		$title = 'Home';
 		$load = 'pages/home.php';
 		break;
 	case '/home/mentions':
-		if(!isset($_SESSION['username'])) header('Location: /');
+		if(!isset($_SESSION['username'])) {
+			http_response_code(403);
+			header('Location: /');
+		}
 		$title = 'Mentions';
 		$type = 'mentions';
 		$load = 'pages/home.php';
 		break;
 	case '/home/public':
-		if(!isset($_SESSION['username'])) header('Location: /');
+		if(!isset($_SESSION['username'])) {
+			http_response_code(403);
+			header('Location: /');
+		}
 		$title = 'Public';
 		$type = 'public';
 		$load = 'pages/home.php';
@@ -217,42 +237,64 @@ switch(preg_replace("/\?(.*)/", "", $_SERVER['REQUEST_URI'])) {
 		}
 		break;
 	case '/settings/profile';
-		if(!isset($_SESSION['username'])) header('Location: /');
+		if(!isset($_SESSION['username'])) {
+			http_response_code(403);
+			header('Location: /');
+		}
 		$title = 'Settings';
 		$load = 'pages/settings_profile.php';
 		break;
 	case '/settings/picture';
-		if(!isset($_SESSION['username'])) header('Location: /');
+		if(!isset($_SESSION['username'])) {
+			http_response_code(403);
+			header('Location: /');
+		}
 		$title = 'Settings';
 		$load = 'pages/settings_picture.php';
 		break;
 	case '/settings/design';
-		if(!isset($_SESSION['username'])) header('Location: /');
+		if(!isset($_SESSION['username'])) {
+			http_response_code(403);
+			header('Location: /');
+		}
 		$title = 'Settings';
 		$load = 'pages/settings_design.php';
 		break;
 	case '/settings/password';
-		if(!isset($_SESSION['username'])) header('Location: /');
+		if(!isset($_SESSION['username'])) {
+			http_response_code(403);
+			header('Location: /');
+		}
 		$title = 'Settings';
 		$load = 'pages/settings_password.php';
 		break;
 	case '/ajax/delete';
-		if(!isset($_SESSION['username'])) header('Location: /');
+		if(!isset($_SESSION['username'])) {
+			http_response_code(403);
+			header('Location: /');
+		}
 		$load = 'pages/ajax_delete.php';
 		$raw = true;
 		break;
 	case '/ajax/follow';
-		if(!isset($_SESSION['username'])) header('Location: /');
+		if(!isset($_SESSION['username'])) {
+			http_response_code(403);
+			header('Location: /');
+		}
 		$load = 'pages/ajax_follow.php';
 		$raw = true;
 		break;
 	case '/ajax/unfollow';
-		if(!isset($_SESSION['username'])) header('Location: /');
+		if(!isset($_SESSION['username'])) {
+			http_response_code(403);
+			header('Location: /');
+		}
 		$load = 'pages/ajax_unfollow.php';
 		$raw = true;
 		break;
 	case '/admin/become';
 		if($_SESSION['admin'] !== true) {
+			http_response_code(403);
 			header('Location: /');
 		} else {
 			$load = 'pages/admin_become.php';
@@ -261,6 +303,7 @@ switch(preg_replace("/\?(.*)/", "", $_SERVER['REQUEST_URI'])) {
 		break;
 	case '/admin/ban';
 		if($_SESSION['admin'] !== true) {
+			http_response_code(403);
 			header('Location: /');
 		} else {
 			$load = 'pages/admin_ban.php';
@@ -309,33 +352,36 @@ switch(preg_replace("/\?(.*)/", "", $_SERVER['REQUEST_URI'])) {
 }
 
 if(isset($_SESSION['username'])) {
-	if(mysqli_num_rows(mysqli_query($conn, "SELECT `username` FROM `users` WHERE `username` = '".$_SESSION['username']."' and `banned` = 0")) == 0) {
+	if(mysqli_fetch_array($conn->query("SELECT COUNT(*) FROM users WHERE username = '".$_SESSION['username']."' and banned = 0"))[0] == 0) {
+		http_response_code(403);
 		require 'pages/signout.php';
 		exit;
 	}
 }
 
-if(isset($_POST['status'])) {
-	if(isset($_SESSION['username'])) {
-		$status = trim($_POST['status']);
-		if(!empty($status)) {
-			if(strlen($status) > 2) {
-				if($_SESSION['last_status'] !== $status) {
-					$query = mysqli_query($GLOBALS['conn'], "SELECT `id` FROM `updates` WHERE `date` > DATE_SUB(NOW(), INTERVAL 30 SECOND) AND `author` = '".$_SESSION['username']."';");
-					$rows = mysqli_num_rows($query);
-					if($rows == 0) {
-						$_SESSION['last_status'] = $status;
-						if(!empty($_POST['reply'])) {
-							mysqli_query($conn, "INSERT INTO updates (author, status, reply) VALUES ('".$_SESSION['username']."', '".mysqli_real_escape_string($conn, $status)."', '".intval($_POST['reply'])."')");
-						} else {
-							mysqli_query($conn, "INSERT INTO updates (author, status) VALUES ('".$_SESSION['username']."', '".mysqli_real_escape_string($conn, $status)."')");
-						}
-					} else { $_SESSION['alert'] = "Please wait 30 seconds before updating your status!"; }
-				} else { $_SESSION['alert'] = "Stop repeating yourself!";}
-			} else { $_SESSION['alert'] = "Your status must be longer than two characters!"; }
-		} else { $_SESSION['alert'] = "We need something here."; }
-	} else { $_SESSION['alert'] = "We need something here."; }
-	header('Location: '.$_SERVER['REQUEST_URI']);
+if(isset($_POST['status']) && isset($_SESSION['username'])) {
+	$status = trim($_POST['status']);
+	if(strlen($status) > 2) {
+		if(strlen($status) <= 140) {
+			if(!isset($_SESSION['last_status']) || $_SESSION['last_status'] !== $status) {
+				if(!isset($_SESSION['last_status_date']) || strtotime($_SESSION['last_status_date']) < strtotime("-30 seconds")) {
+					$_SESSION['last_status'] = $status;
+					$_SESSION['last_status_date'] = date(DATE_RFC822);
+					$reply = intval($_POST['reply']);
+					if(isset($_POST['reply'])) {
+						$stmt = $conn->prepare("INSERT INTO updates (author, status, reply) VALUES (?, ?, ?)");
+						$stmt->bind_param("ssi", $_SESSION['username'], $status, $reply);
+					} else {
+						$stmt = $conn->prepare("INSERT INTO updates (author, status) VALUES (?, ?)");
+						$stmt->bind_param("ss", $_SESSION['username'], $status);
+					}
+					$stmt->execute();
+					$stmt->close();
+				} else { $_SESSION['alert'] = "Please wait 30 seconds between updates!"; }
+			} else { $_SESSION['alert'] = "Stop repeating yourself!"; }
+		} else { $_SESSION['alert'] = "Your status is longer than 140 characters!"; }
+	} else { $_SESSION['alert'] = "Your status must be longer than two characters!"; }
+	if(!isset($_POST['reply'])) header('Location: '.$_SERVER['REQUEST_URI']);
 	exit;
 }
 
