@@ -428,7 +428,7 @@ if($load == "pages/permalink.php") {
 		if(file_exists("./images/profiles/".$_GET['user'].".gif")) {
 			echo '<meta property="og:image" content="http://status.ryslig.xyz/images/profiles/'.$_GET['user'].'.gif">';
 		}
-		echo '<link rel="alternate" type="application/rss+xml" title="'.strtoupper($title).' :: STATUS.RYSLIG.XYZ" href="http://status.ryslig.xyz/rss?user='.$_GET['user'].'">';
+		echo '<link rel="alternate" type="application/rss+xml" title="'.$title.'" href="http://status.ryslig.xyz/rss?user='.$_GET['user'].'">';
 	}
 	if(isset($_SESSION['username']) or $load == 'pages/profile.php' or $load == 'pages/permalink.php') {
 		if($load == 'pages/profile.php') {
@@ -469,24 +469,20 @@ if($load == "pages/permalink.php") {
 				<br>
 				<?php
 					if($load == 'pages/profile.php' && $_SESSION['admin'] == true && $_SESSION['username'] !== $_GET['user']) {
-						echo '<h2>admin tools:</h2>
-						<ul>
-							<li><a href="/admin/become?user='.$_GET['user'].'">Become User</a></li>
-							<li><a href="/admin/ban?user='.$_GET['user'].'">Ban Account</a></li>
-						</ul>
-						<br>';
+						echo '<h2>admin tools:</h2>'.
+						'<ul><li><a href="/admin/become?user='.$_GET['user'].'">Become User</a></li>'.
+						'<li><a href="/admin/ban?user='.$_GET['user'].'">Ban Account</a></li></ul>'.
+						'<br>';
 					}
 				?>
 				<h2>latest users:</h2>
-				<ul>
-				<?php
+				<ul><?php
 					$sql = "SELECT `username`, `fullname` FROM users WHERE banned != 1 ORDER BY `date` DESC LIMIT 6";
 					$result = $conn->query($sql);
 					while($row = $result->fetch_assoc()) {
 						echo '<li><a href="/profile?user='.$row['username'].'">'.htmlspecialchars($row['fullname']).'</a></li>';
 					}
-				?>
-				</ul> 
+				?></ul> 
 			</td>
 			<td valign="top" id="content">
 			<?php
