@@ -33,7 +33,7 @@ function reply(id) {
 <form method="post" action="/widget" autocomplete="off">
 	<table cellpadding="6" cellspacing="0" width="100%">
 		<tr>
-			<td width="100%"><input type="text" name="status" id="status" maxlength="140"><input type="hidden" name="reply" id="reply"></td>
+			<td width="100%"><input type="text" name="status" id="status" maxlength="200"><input type="hidden" name="reply" id="reply"></td>
 			<td><input type="submit" id="update" value="Update"></td>
 		</tr>
 	</table>

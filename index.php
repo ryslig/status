@@ -66,7 +66,7 @@ class Timeline {
 						echo ' class="mention"';
 					}
 				}
-				echo '><td width="49"><a href="/profile?user='.$status['author'].'">';
+				echo '><td width="49" valign="top"><a href="/profile?user='.$status['author'].'">';
 				if(file_exists("./images/profiles/".$status['author'].".gif")) {
 					echo '<img src="/images/profiles/'.$status['author'].'.gif" width="45" height="45" class="thumb" alt="'.$status['author'].'">';
 				} else {
@@ -368,13 +368,13 @@ if(isset($_SESSION['username'])) {
 if(isset($_POST['status']) && isset($_SESSION['username'])) {
 	$status = trim($_POST['status']);
 	if(strlen($status) > 2) {
-		if(strlen($status) <= 140) {
+		if(strlen($status) <= 200) {
 			if(!isset($_SESSION['last_status']) || $_SESSION['last_status'] !== $status) {
 				if(!isset($_SESSION['last_status_date']) || strtotime($_SESSION['last_status_date']) < strtotime("-30 seconds")) {
 					$_SESSION['last_status'] = $status;
 					$_SESSION['last_status_date'] = date(DATE_RFC822);
 					$reply = intval($_POST['reply']);
-					if(isset($_POST['reply'])) {
+					if(!empty($_POST['reply'])) {
 						$stmt = $conn->prepare("INSERT INTO updates (author, status, reply) VALUES (?, ?, ?)");
 						$stmt->bind_param("ssi", $_SESSION['username'], $status, $reply);
 					} else {
@@ -385,7 +385,7 @@ if(isset($_POST['status']) && isset($_SESSION['username'])) {
 					$stmt->close();
 				} else { $_SESSION['alert'] = "Please wait 30 seconds between updates!"; }
 			} else { $_SESSION['alert'] = "Stop repeating yourself!"; }
-		} else { $_SESSION['alert'] = "Your status is longer than 140 characters!"; }
+		} else { $_SESSION['alert'] = "Your status is longer than 200 characters!"; }
 	} else { $_SESSION['alert'] = "Your status must be longer than two characters!"; }
 	if(!isset($_POST['reply'])) header('Location: '.$_SERVER['REQUEST_URI']);
 	exit;
@@ -408,7 +408,7 @@ if($load == "pages/permalink.php") {
 		exit;
 	} else {
 		$sql = mysqli_fetch_array($conn->query("SELECT * FROM updates WHERE id = ".intval($_GET['id'])));
-		$title = $sql['author'].": ".htmlspecialchars($sql['status']);
+		$title = $sql['author'].": ".$sql['status'];
 	}
 }
 ?>
@@ -419,7 +419,7 @@ if($load == "pages/permalink.php") {
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title><?php echo $title; ?></title>
 	<link href="/style.css?5292021_6" rel="stylesheet" type="text/css">
-	<script src="/app.js?07142021_2" type="text/javascript"></script>
+	<script src="/app.js?07252021" type="text/javascript"></script>
 	<meta property="og:site_name" content="status.ryslig.xyz">
 	<meta property="og:type" content="website">
 	<meta property="og:title" content="<?php echo $title; ?>">

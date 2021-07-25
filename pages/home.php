@@ -1,6 +1,6 @@
-<h2>what are you doing? <small><span id="counter">140</span></small></h2>
+<h2>what are you doing? <small><span id="counter">200</span></small></h2>
 <form method="post" action="/home">
-	<textarea name="status" id="status" maxlength="140" oninput="count_it()" autocomplete="off" rows="3"></textarea>
+	<textarea name="status" id="status" maxlength="200" oninput="count_it()" autocomplete="off" rows="3"></textarea>
 	<br><br>
 	<input type="submit" value="update">
 </form>

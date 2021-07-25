@@ -26,7 +26,7 @@ function delete_status(id) {
 function reply(id) {
 	var update = prompt("What would you like to reply with?");
 	if(update != null && update != "") {
-		if(update.length <= 140) {
+		if(update.length <= 200) {
 			if(legacy == true) {
 				document.getElementById('status_legacy').value = update;
 				document.getElementById('id_legacy').value = id;
@@ -42,7 +42,7 @@ function reply(id) {
 				location.reload();
 			}
 		} else {
-			alert("Your reply is longer than 140 characters.");
+			alert("Your reply is longer than 200 characters.");
 			reply(id);
 		}	
 	}
@@ -71,8 +71,8 @@ function unfollow_user(user) {
 }
 
 function count_it() {
-	document.getElementById('counter').innerHTML = 140 - document.getElementById('status').value.length;
-	if(document.getElementById('status').value.length > 140) {
+	document.getElementById('counter').innerHTML = 200 - document.getElementById('status').value.length;
+	if(document.getElementById('status').value.length > 200) {
 		document.getElementById('counter').style.color = "red";
 	} else {
 		document.getElementById('counter').style.color = "inherit";
