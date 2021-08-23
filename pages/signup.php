@@ -1,11 +1,16 @@
 <?php
 if($_SERVER['REQUEST_METHOD'] == "POST") {
-	# SCREEN NAME
+	# USERNAME
 	if(isset($_POST['username'])) {
 		if(strlen($_POST['username']) >= 3) {
 			if(strlen($_POST['username']) <= 16) {
 				if(!preg_match("/[^0-9a-zA-Z\s]/", $_POST['username'])) {
-					if(mysqli_num_rows(mysqli_query($conn, "SELECT * FROM `users` WHERE `username` = '".$_POST['username']."';")) == 0) {
+					#prepared statements suck but at least its safe
+					$checkUser = $conn->prepare("SELECT * FROM users WHERE username = ?");
+					$checkUser->bind_param("s", $_POST['username']);
+					$checkUser->execute();
+					$checkUser->store_result();
+					if($checkUser->num_rows == 0) {
 						$username = $_POST['username'];
 					} else { $_SESSION['alert'] = "That username is already taken!"; }
 				} else { $_SESSION['alert'] = "Username cannot contain special characters!"; }
@@ -32,7 +37,10 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 	} else { $_SESSION['alert'] = "Please enter a password!"; }
 	# INSERT INTO DATABASE
 	if(!isset($_SESSION['alert'])) {
-		mysqli_query($conn, "INSERT INTO users (username, fullname, password) VALUES ('".mysqli_real_escape_string($conn, $username)."', '".mysqli_real_escape_string($conn, $fullname)."', '".mysqli_real_escape_string($conn, $password)."')");
+		$stmt = $conn->prepare("INSERT INTO users (username, fullname, password) VALUES (?, ?, ?)");
+		$stmt->bind_param("sss", $username, $fullname, $password);
+		$stmt->execute();
+		$stmt->close();
 		$_SESSION['username'] = $username;
 		$_SESSION['alert'] = "Account successfully created!";
 		header('Location: /home');

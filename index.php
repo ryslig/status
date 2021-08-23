@@ -6,6 +6,7 @@ $starttime = microtime(true);
 include('config.php');
 $GLOBALS['conn'] = $conn = new mysqli($config['db']['host'], $config['db']['user'], $config['db']['pass'], $config['db']['db']);
 if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
+$conn->set_charset("utf8mb4");
 
 ini_set('session.gc_maxlifetime', 86400);
 session_set_cookie_params(86400);
@@ -112,7 +113,7 @@ class Timeline {
 			foreach($GLOBALS['conn']->query($sql) as $status) {
 				echo "<item>".
 				"<title>".$status['author'].": ".htmlspecialchars($status['status'])."</title>".
-				"<description>".htmlspecialchars($status['status'])."</description>".
+				"<description><![CDATA[".$this->place_links(htmlspecialchars($status['status']))."]]></description>".
 				"<pubDate>".date(DATE_RFC822, strtotime($status['date']))."</pubDate>".
 				"<link>//status.ryslig.xyz/permalink?id=".$status['id']."</link>".
 				"<author><name>".$status['author']."</name></author>".
@@ -340,16 +341,16 @@ switch(preg_replace("/\?(.*)/", "", $_SERVER['REQUEST_URI'])) {
 		$partial = true;
 		break;
 	case '/profile';
-		if(!preg_match("/[^0-9a-zA-Z\s]/", $_GET['user'])) {
-			$sql = mysqli_fetch_array(mysqli_query($conn, "SELECT `username`, `banned` FROM `users` WHERE `username` = '".mysqli_real_escape_string($conn, $_GET['user'])."'"), MYSQLI_ASSOC);
-			if(!empty($sql['username'])) {
-				if($sql['banned'] !== true) {
-					$title = $sql['username']."'s Profile";
-					$load = 'pages/profile.php';
-					break;
-				}
-			}
+		$stmt = $conn->prepare("SELECT * FROM users WHERE username = ? AND banned = 0;");
+		$stmt->bind_param("s", $_GET['user']);
+		$stmt->execute();
+		$stmt->store_result();
+		if($stmt->num_rows == 1) {
+			$title = $_GET['user']."'s Profile";
+			$load = 'pages/profile.php';
+			break;
 		}
+		$stmt->close();
 	default:
 		http_response_code(404);
 		$title = 'Page Not Found';
@@ -358,7 +359,11 @@ switch(preg_replace("/\?(.*)/", "", $_SERVER['REQUEST_URI'])) {
 }
 
 if(isset($_SESSION['username'])) {
-	if(mysqli_fetch_array($conn->query("SELECT COUNT(*) FROM users WHERE username = '".$_SESSION['username']."' and banned = 0"))[0] == 0) {
+	$stmt = $conn->prepare("SELECT * FROM users WHERE username = ? AND banned = 0;");
+	$stmt->bind_param("s", $_SESSION['username']);
+	$stmt->execute();
+	$stmt->store_result();
+	if($stmt->num_rows == 0) {
 		http_response_code(403);
 		require 'pages/signout.php';
 		exit;
@@ -403,13 +408,18 @@ if(isset($title)) {
 }
 
 if($load == "pages/permalink.php") {
-	if(mysqli_fetch_array($conn->query("SELECT COUNT(*) FROM updates WHERE id = ".intval($_GET['id'])))[0] == 0) {
+	$stmt = $conn->prepare("SELECT * FROM updates WHERE id = ?");
+	$stmt->bind_param("i", $_GET['id']);
+	$stmt->execute();
+	$stmt->store_result();
+	if($stmt->num_rows == 0) {
 		http_response_code(404);
 		exit;
 	} else {
 		$sql = mysqli_fetch_array($conn->query("SELECT * FROM updates WHERE id = ".intval($_GET['id'])));
 		$title = $sql['author'].": ".$sql['status'];
 	}
+	$stmt->close();
 }
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -468,7 +478,7 @@ if($load == "pages/permalink.php") {
 				?>
 				<br>
 				<?php
-					if($load == 'pages/profile.php' && $_SESSION['admin'] == true && $_SESSION['username'] !== $_GET['user']) {
+					if($load == 'pages/profile.php' && isset($_SESSION['admin']) && $_SESSION['admin'] == true && $_SESSION['username'] !== $_GET['user']) {
 						echo '<h2>admin tools:</h2>'.
 						'<ul><li><a href="/admin/become?user='.$_GET['user'].'">Become User</a></li>'.
 						'<li><a href="/admin/ban?user='.$_GET['user'].'">Ban Account</a></li></ul>'.
@@ -477,7 +487,7 @@ if($load == "pages/permalink.php") {
 				?>
 				<h2>latest users:</h2>
 				<ul><?php
-					$sql = "SELECT `username`, `fullname` FROM users WHERE banned != 1 ORDER BY `date` DESC LIMIT 6";
+					$sql = "SELECT username, fullname FROM users WHERE banned != 1 ORDER BY `date` DESC LIMIT 6";
 					$result = $conn->query($sql);
 					while($row = $result->fetch_assoc()) {
 						echo '<li><a href="/profile?user='.$row['username'].'">'.htmlspecialchars($row['fullname']).'</a></li>';

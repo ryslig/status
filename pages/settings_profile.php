@@ -5,14 +5,23 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 		if(!empty($_POST['website'])) {
 			if(filter_var($_POST['website'], FILTER_VALIDATE_URL)) {
 				$_SESSION['alert'] = "Changes saved!";
-				mysqli_query($conn, "UPDATE users SET fullname = '".mysqli_real_escape_string($conn, trim($_POST['fullname']))."', quote = '".mysqli_real_escape_string($conn, trim($_POST['quote']))."', website = '".mysqli_real_escape_string($conn, trim($_POST['website']))."' WHERE username = '".$_SESSION['username']."'");
+				$stmt = $conn->prepare("UPDATE users SET fullname = ?, quote = ?, website = ? WHERE username = ?;");
+				$stmt->bind_param("ssss", $_POST['fullname'], $_POST['quote'], $_POST['website'], $_SESSION['username']);
+				$stmt->execute();
+				$stmt->close();
 			} else {
 				$_SESSION['alert'] = "You did not provide a valid website. Did you forget the protocol?";
-				mysqli_query($conn, "UPDATE users SET fullname = '".mysqli_real_escape_string($conn, trim($_POST['fullname']))."', quote = '".mysqli_real_escape_string($conn, trim($_POST['quote']))."' WHERE username = '".$_SESSION['username']."'");
+				$stmt = $conn->prepare("UPDATE users SET fullname = ?, quote = ? WHERE username = ?;");
+				$stmt->bind_param("sss", $_POST['fullname'], $_POST['quote'], $_SESSION['username']);
+				$stmt->execute();
+				$stmt->close();
 			}
 		} else {
 			$_SESSION['alert'] = "Changes saved!";
-			mysqli_query($conn, "UPDATE users SET fullname = '".mysqli_real_escape_string($conn, trim($_POST['fullname']))."', quote = '".mysqli_real_escape_string($conn, trim($_POST['quote']))."', website = null WHERE username = '".$_SESSION['username']."'");
+			$stmt = $conn->prepare("UPDATE users SET fullname = ?, quote = ?, website = NULL WHERE username = ?;");
+			$stmt->bind_param("sss", $_POST['fullname'], $_POST['quote'], $_SESSION['username']);
+			$stmt->execute();
+			$stmt->close();
 		}
 	} else {
 		$_SESSION['alert'] = "You need to enter a name!";

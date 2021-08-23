@@ -1,18 +1,22 @@
 <?php
-$current_password = mysqli_fetch_assoc(mysqli_query($conn, "SELECT password FROM users WHERE username = '".$_SESSION['username']."'"));
-	
-if(isset($_POST['password']) and isset($_POST['confirm_password'])) {
-	if(password_verify($_POST['current_password'], $current_password['password'])) {
-		if($_POST['password'] == $_POST['confirm_password']) {
-			if(strlen($_POST['password']) >= 6) {
-				if(strlen($_POST['password']) <= 64) {
-					$password = password_hash($_POST['password'], PASSWORD_BCRYPT);
-					mysqli_query($conn, "UPDATE users SET password = '".mysqli_real_escape_string($conn, $password)."' WHERE username = '".$_SESSION['username']."'");
-					$_SESSION['alert'] = "Password successfully changed!";
-				} else { $_SESSION['alert'] = "Your password cannot be longer than 64 characters!"; }
-			} else { $_SESSION['alert'] = "Your password must be longer than 6 characters!"; }
-		} else { $_SESSION['alert'] = "Your passwords must match!"; }
-	} else { $_SESSION['alert'] = "Password is incorrect!"; }
+if($_SERVER['REQUEST_METHOD'] == "POST") {
+	$current_password = mysqli_fetch_assoc(mysqli_query($conn, "SELECT password FROM users WHERE username = '".$_SESSION['username']."'"));	
+	if(isset($_POST['password']) and isset($_POST['confirm_password'])) {
+		if(password_verify($_POST['current_password'], $current_password['password'])) {
+			if($_POST['password'] == $_POST['confirm_password']) {
+				if(strlen($_POST['password']) >= 6) {
+					if(strlen($_POST['password']) <= 64) {
+						$_SESSION['alert'] = "Password successfully changed!";
+						$password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+						$stmt = $conn->prepare("UPDATE users SET password = ? WHERE username = ?;");
+						$stmt->bind_param("ss", $password, $_SESSION['username']);
+						$stmt->execute();
+						$stmt->close();
+					} else { $_SESSION['alert'] = "Your password cannot be longer than 64 characters!"; }
+				} else { $_SESSION['alert'] = "Your password must be longer than 6 characters!"; }
+			} else { $_SESSION['alert'] = "Your passwords must match!"; }
+		} else { $_SESSION['alert'] = "Password is incorrect!"; }
+	}
 	header('Location: /settings/password');
 }
 ?>

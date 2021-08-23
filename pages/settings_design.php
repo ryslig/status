@@ -13,7 +13,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 				if(color_valid($_POST['border_color']) == true) {
 					if(color_valid($_POST['link_color']) == true) {
 						if(color_valid($_POST['highlight_color']) == true) {
-							mysqli_query($conn, "UPDATE users SET bg_color = '".$_POST['bg_color']."', text_color = '".$_POST['text_color']."', meta_color = '".$_POST['meta_color']."', border_color = '".$_POST['border_color']."', link_color = '".$_POST['link_color']."', highlight_color = '".$_POST['highlight_color']."', home = '".intval($_POST['homepage_style'])."' WHERE username = '".$_SESSION['username']."'");
+							$stmt = $conn->prepare("UPDATE users SET bg_color = ?, text_color = ?, meta_color = ?, border_color = ?, link_color = ?, highlight_color = ?, home = ? WHERE username = ?;");
+							$stmt->bind_param("ssssssis", $_POST['bg_color'], $_POST['text_color'], $_POST['meta_color'], $_POST['border_color'], $_POST['link_color'], $_POST['highlight_color'], $_POST['homepage_style'], $_SESSION['username']);
+							$stmt->execute();
+							$stmt->close();
 							$_SESSION['alert'] = "Changes saved!";
 						}
 					}
