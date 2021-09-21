@@ -31,7 +31,7 @@ class Timeline {
 			$this->page = intval($_GET['page']);
 		} else {
 			$this->page = 0;
-		}	
+		}
 		switch($this->type) {
 			case 'timeline':
 				$sql = "SELECT * FROM `updates` WHERE `author` IN (SELECT following FROM follows WHERE follower = '".$_SESSION['username']."') OR `author` = '".$_SESSION['username']."' OR `reply` IN (SELECT id FROM updates WHERE author = '".$_SESSION['username']."') OR `status` LIKE '%@".$_SESSION['username']."%' ORDER BY CAST(id as SIGNED INTEGER) DESC LIMIT ".$this->page*$this->limit.",".$this->limit;
@@ -82,7 +82,7 @@ class Timeline {
 						echo '<img src="/images/icon_delete.gif" alt="Delete" title="Delete" onclick="delete_status(\''.$status['id'].'\')" width="16" height="16">';
 					}
 				}
-				echo '</td></tr>';
+				echo '</td></tr>'."\r\n";
 			}
 			echo '</table>';
 		} elseif($format == 1) {
@@ -96,7 +96,7 @@ class Timeline {
 						echo '<img src="/images/icon_delete.gif" alt="Delete" title="Delete" onclick="delete_status(\''.$status['id'].'\')" width="16" height="16">';
 					}
 				}
-				'</p>';
+				'</p>'."\r\n";
 			}
 			echo "<br>";
 		} elseif($format == 2) {
@@ -128,11 +128,15 @@ class Timeline {
 			if($count > $this->limit) {
 				$pages_amount = floor($count/$this->limit);
 				if(!isset($this->user)) {
-					if($this->page !== 0) echo '<a href="?page='. $this->page-1 .'" rel="prev"><button>&larr; Newer</button></a>';
-					if($pages_amount > $this->page) echo '<a href="?page='. $this->page+1 .'" rel="next"><button style="float: right">Older &rarr;</button></a>';
+					if($this->page !== 0) {
+						echo '<a href="?page='. intval($this->page - 1) .'" rel="prev"><button>&larr; Newer</button></a>';
+					}
+					if($pages_amount > $this->page) {
+						echo '<a href="?page='. intval($this->page + 1) .'" rel="next"><button style="float: right">Older &rarr;</button></a>';
+					}
 				} else {
-					if($this->page !== 0) echo '<a href="?user='.$this->user.'&page='. $this->page-1 .'" rel="prev"><button>&larr; Newer</button></a>';
-					if($pages_amount > $this->page) echo '<a href="?user='.$this->user.'&page='. $this->page+1 .'" rel="next"><button style="float: right">Older &rarr;</button></a>';
+					if($this->page !== 0) echo '<a href="?user='.$this->user.'&page='. intval($this->page - 1) .'" rel="prev"><button>&larr; Newer</button></a>';
+					if($pages_amount > $this->page) echo '<a href="?user='.$this->user.'&page='. intval($this->page + 1) .'" rel="next"><button style="float: right">Older &rarr;</button></a>';
 				}
 			}
 		}
