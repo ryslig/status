@@ -279,6 +279,14 @@ switch(preg_replace("/\?(.*)/", "", $_SERVER['REQUEST_URI'])) {
 		$title = 'Settings';
 		$load = 'pages/settings_password.php';
 		break;
+	case '/settings/api';
+		if(!isset($_SESSION['username'])) {
+			http_response_code(403);
+			header('Location: /');
+		}
+		$title = 'Settings';
+		$load = 'pages/settings_api.php';
+		break;
 	case '/ajax/delete';
 		if(!isset($_SESSION['username'])) {
 			http_response_code(403);
@@ -396,7 +404,7 @@ if(isset($_POST['status']) && isset($_SESSION['username'])) {
 			} else { $_SESSION['alert'] = "Stop repeating yourself!"; }
 		} else { $_SESSION['alert'] = "Your status is longer than 200 characters!"; }
 	} else { $_SESSION['alert'] = "Your status must be longer than two characters!"; }
-	if(!isset($_POST['reply'])) header('Location: '.$_SERVER['REQUEST_URI']);
+	if(empty($_POST['reply'])) header('Location: '.$_SERVER['REQUEST_URI']);
 	exit;
 }
 
@@ -491,7 +499,7 @@ if($load == "pages/permalink.php") {
 				?>
 				<h2>latest users:</h2>
 				<ul><?php
-					$sql = "SELECT username, fullname FROM users WHERE banned != 1 ORDER BY `date` DESC LIMIT 6";
+					$sql = "SELECT username, fullname FROM users WHERE banned = 0 ORDER BY `date` DESC LIMIT 6";
 					$result = $conn->query($sql);
 					while($row = $result->fetch_assoc()) {
 						echo '<li><a href="/profile?user='.$row['username'].'">'.htmlspecialchars($row['fullname']).'</a></li>';
@@ -510,7 +518,8 @@ if($load == "pages/permalink.php") {
 						<li><a href="/settings/profile">Profile Info</a></li>
 						<li><a href="/settings/picture">Change Picture</a></li>
 						<li><a href="/settings/design">Edit Design</a></li>
-						<li class="last"><a href="/settings/password">Change Password</a></li>
+						<li><a href="/settings/password">Change Password</a></li>
+						<li class="last"><a href="/settings/api">API Token</a></li>
 					</ul>
 					<br><br>';
 				}

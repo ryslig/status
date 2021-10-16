@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Status API Documentation</title>
+</head>
+<body>
+<h1>Status API Documentation</h1>
+<p>Contents:</p>
+<ol type="i">
+<li><a href="#token">Getting your token</a></li>
+<li><a href="#timeline">Fetching statuses</a></li>
+<li><a href="#profile">Getting information about a user</a></li>
+<li><a href="#update">Updating your status</a></li>
+<li><a href="#delete">Deleting your status</a></li>
+</ol>
+<hr>
+<a id="token"></a>
+<h2>Getting your token</h2>
+<p><img src="/images/tutorial.jpg"></p>
+<p>If it doesn't show a token, that means you don't have one. Click the reset button to make one.</p>
+<hr>
+<a id="timeline"></a>
+<h2>Fetching statuses</h2>
+<p><code>GET https://status.ryslig.xyz/api/timeline</code></p>
+<h3>Parameters:</h3>
+<dl>
+<dt>type</dt>
+<dd>Possible options: public, profile, mentions, following, specific. Public is default.</dd>
+<dt>user</dt>
+<dd>Only needed when type is profile, mentions, or following.</dd>
+<dt>id</dt>
+<dd>Only needed when type is specific. Used for permalinks.</dd>
+<dt>page</dt>
+<dd>Self-explanatory. Default is 1.</dd>
+<dt>limit</dt>
+<dd>Defines the amount of updates. Cannot exceed 100. Default is 25.</dd>
+</dl><br>
+<p><b>Example:</b> <code>https://status.ryslig.xyz/api/timeline?type=profile&user=status&limit=5</code></p>
+<hr>
+<a id="profile"></a>
+<h2>Getting information about a user</h2>
+<p><code>GET https://status.ryslig.xyz/api/profile</code></p>
+<dl>
+<dt>user<font color="red">*</font></dt>
+<dd>The username of the person you want information on.</dd>
+<dt>token</dt>
+<dd>The token of the person you want information on. Can be used instead of the user parameter.</dd>
+</dl>
+<p><b>Example:</b> <code>https://status.ryslig.xyz/api/profile?user=status</code></p>
+<hr>
+<a id="update"></a>
+<h2>Updating your status</h2>
+<p><code>POST https://status.ryslig.xyz/api/update</code></p>
+<p><b>Note:</b> You can only update your status once every 30 seconds.</p>
+<dl>
+<dt>token<font color="red">*</font></dt>
+<dd>Self-explanatory.</dd>
+<dt>status<font color="red">*</font></dt>
+<dd>A string. Must be longer than two characters and shorter than 200 characters.</dd>
+<dt>reply</dt>
+<dd>The ID of the status you want to reply to.</dd>
+</dl>
+<hr>
+<a id="delete"></a>
+<h2>Deleting your status</h2>
+<p><code>GET https://status.ryslig.xyz/api/delete</code></p>
+<dl>
+<dt>token<font color="red">*</font></dt>
+<dd>Self-explanatory.</dd>
+<dt>id<font color="red">*</font></dt>
+<dd>The ID of the status you want to delete.</dd>
+</dl>
+<p><b>Example:</b> <code>https://status.ryslig.xyz/api/delete?token=d9ad4029e23ad319&id=5</code></p>
+<hr>
+<p>This probably doesn't make that much sense. If you have any questions, feel free to reach out.</p>
+<p>Also, the red asterisk means that the parameter is required.</p>
+</body>
+</html>

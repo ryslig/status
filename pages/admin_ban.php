@@ -1,7 +1,7 @@
 <?php
 if(isset($_GET['user'])) {
 	if(isset($_GET['confirm'])) {
-		mysqli_query($conn, "UPDATE users SET fullname=null, password=null, quote=null, website=null, bg_color=null, text_color=null, meta_color=null, border_color=null, link_color=null, home=null, admin=null, banned=1 WHERE username = '".$_GET['user']."'");
+		mysqli_query($conn, "UPDATE users SET password=0, quote=null, website=null, bg_color='#000000', text_color='#000000', meta_color='#000000', border_color='#000000', link_color='#000000', home=0, admin=0, banned=1 WHERE username = '".$_GET['user']."'");
 		mysqli_query($conn, "DELETE FROM updates WHERE author = '".$_GET['user']."'");
 		mysqli_query($conn, "DELETE FROM follows WHERE follower = '".$_GET['user']."'");
 		mysqli_query($conn, "DELETE FROM follows WHERE following = '".$_GET['user']."'");
