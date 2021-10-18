@@ -53,7 +53,8 @@ CREATE TABLE `users` (
   `highlight_color` varchar(7) NOT NULL DEFAULT '#eeeeff',
   `home` int(11) NOT NULL DEFAULT '0',
   `admin` int(11) NOT NULL DEFAULT '0',
-  `banned` int(11) NOT NULL DEFAULT '0'
+  `banned` int(11) NOT NULL DEFAULT '0',
+  `token` varchar(16) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 /* -- */
