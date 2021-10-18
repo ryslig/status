@@ -1,5 +1,5 @@
 <?php
-	echo '<?xml version="1.0" encoding="UTF-8"?>';
+echo '<?xml version="1.0" encoding="UTF-8"?>'; // php would error out if i didnt do this. odd.
 ?>
 <urlset
 	xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -23,7 +23,7 @@
 </url>
 <?php
 
-$sql = "SELECT `username` FROM `users` ORDER BY `username`";
+$sql = "SELECT `username` FROM `users` WHERE `banned` = 0 ORDER BY `username`";
 
 if ($result = mysqli_query($conn, $sql)) {
 	while ($row = mysqli_fetch_assoc($result)) {
