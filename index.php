@@ -96,9 +96,8 @@ class Timeline {
 						echo '<img src="/images/icon_delete.gif" alt="Delete" title="Delete" onclick="delete_status(\''.$status['id'].'\')" width="16" height="16">';
 					}
 				}
-				'</p>'."\r\n";
+				echo '</p>'."\r\n";
 			}
-			echo "<br>";
 		} elseif($format == 2) {
 			foreach($GLOBALS['conn']->query($sql) as $status) {
 				echo '<p><strong><a href="/profile?user='.$status['author'].'" target="_blank">'.$status['author'].'</a>:</strong> '.$this->place_links(htmlspecialchars($status['status'])).' <small>(<a href="/permalink?id='.$status['id'].'" target="_blank">'.$this->time_elapsed_string($status['date']).'</a>';
@@ -439,12 +438,9 @@ if($load == "pages/permalink.php") {
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title><?php echo $title; ?></title>
+	<title><?php echo htmlspecialchars($title); ?></title>
 	<link href="/style.css?5292021_6" rel="stylesheet" type="text/css">
 	<script src="/app.js?07252021" type="text/javascript"></script>
-	<meta property="og:site_name" content="status.ryslig.xyz">
-	<meta property="og:type" content="website">
-	<meta property="og:title" content="<?php echo $title; ?>">
 	<?php
 	if($load == "pages/profile.php") {
 		if(file_exists("./images/profiles/".$_GET['user'].".gif")) {
@@ -477,7 +473,7 @@ if($load == "pages/permalink.php") {
 	<?php if(!isset($partial)) { ?>
 	<table align="center" width="700">
 		<tr>
-			<td colspan="2"><h1><a href="/">status.ryslig.xyz</a></h1></td>
+			<td colspan="3"><h1><a href="/">status.ryslig.xyz</a></h1></td>
 		</tr>
 		<tr>
 			<td width="130" valign="top" id="sidebar">
@@ -504,7 +500,12 @@ if($load == "pages/permalink.php") {
 					while($row = $result->fetch_assoc()) {
 						echo '<li><a href="/profile?user='.$row['username'].'">'.htmlspecialchars($row['fullname']).'</a></li>';
 					}
-				?></ul> 
+				?></ul>
+				<?php
+				if(date("nj") == 1031) { // halloween bruh!
+					echo '<br><br><img src="/images/jack-o-lantern.gif" width="105" height="104" border="0" alt="Jack-o-lantern" />';
+				}
+				?>
 			</td>
 			<td valign="top" id="content">
 			<?php
