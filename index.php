@@ -24,7 +24,7 @@ if($config['debug'] == true) {
 class Timeline {
 	public $type;
 	public $user;
-	public $limit = 25;
+	public $limit = 20;
 	public $paging = true;
 	public function display($format = 0) {
 		if(isset($_GET['page'])) {
@@ -38,7 +38,7 @@ class Timeline {
 				$count = "SELECT COUNT(*) FROM `updates` WHERE `author` IN (SELECT following FROM follows WHERE follower = '".$_SESSION['username']."') OR `author` = '".$_SESSION['username']."' OR `reply` IN (SELECT id FROM updates WHERE author = '".$_SESSION['username']."') OR `status` LIKE '%@".$_SESSION['username']."%'";
 				break;
 			case 'currently':
-				$sql = "SELECT * FROM `updates` WHERE `id` IN (SELECT MAX(`id`) FROM `updates` WHERE `author` IN (SELECT following FROM follows WHERE follower = '".$_SESSION['username']."') OR `author` = '".$_SESSION['username']."' GROUP BY `author`) AND `date` > DATE_SUB(NOW(), INTERVAL 1 WEEK) ORDER BY CAST(id as SIGNED INTEGER) DESC";
+				$sql = "SELECT * FROM `updates` WHERE `id` IN (SELECT MAX(`id`) FROM `updates` WHERE `author` IN (SELECT following FROM follows WHERE follower = '".$_SESSION['username']."') OR `author` = '".$_SESSION['username']."' GROUP BY `author`) ORDER BY CAST(id as SIGNED INTEGER) DESC";
 				break;
 			case 'mentions':
 				$sql = "SELECT * FROM `updates` WHERE `status` LIKE '%@".$_SESSION['username']."%' OR `reply` IN (SELECT id FROM updates WHERE author = '".$_SESSION['username']."') ORDER BY CAST(id as SIGNED INTEGER) DESC LIMIT ".$this->page*$this->limit.",".$this->limit;
@@ -226,7 +226,7 @@ switch(preg_replace("/\?(.*)/", "", $_SERVER['REQUEST_URI'])) {
 			http_response_code(403);
 			header('Location: /');
 		}
-		$title = 'Mentions';
+		$title = 'Home';
 		$type = 'mentions';
 		$load = 'pages/home.php';
 		break;
@@ -235,7 +235,7 @@ switch(preg_replace("/\?(.*)/", "", $_SERVER['REQUEST_URI'])) {
 			http_response_code(403);
 			header('Location: /');
 		}
-		$title = 'Public';
+		$title = 'Home';
 		$type = 'public';
 		$load = 'pages/home.php';
 		break;
@@ -347,17 +347,26 @@ switch(preg_replace("/\?(.*)/", "", $_SERVER['REQUEST_URI'])) {
 		$raw = true;
 		break;
 	case '/permalink';
-		$title = "Permalink";
-		$load = "pages/permalink.php";
-		$partial = true;
-		break;
+		$stmt = $conn->prepare("SELECT * FROM updates WHERE id = ?");
+		$stmt->bind_param("i", $_GET['id']);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if($result->num_rows > 0) {
+			$result = $result->fetch_assoc();
+			$title = $result['author'].": ".$result['status'];
+			$load = "pages/permalink.php";
+			$partial = true;
+			break;
+		}
+		$stmt->close();
 	case '/profile';
-		$stmt = $conn->prepare("SELECT * FROM users WHERE username = ? AND banned = 0;");
+		$stmt = $conn->prepare("SELECT fullname FROM users WHERE username = ? AND banned = 0;");
 		$stmt->bind_param("s", $_GET['user']);
 		$stmt->execute();
-		$stmt->store_result();
-		if($stmt->num_rows == 1) {
-			$title = $_GET['user']."'s Profile";
+		$result = $stmt->get_result();
+		if($result->num_rows == 1) {
+			$result = $result->fetch_assoc();
+			$title = $result['fullname'];
 			$load = 'pages/profile.php';
 			break;
 		}
@@ -379,6 +388,7 @@ if(isset($_SESSION['username'])) {
 		require 'pages/signout.php';
 		exit;
 	}
+	$stmt->close();
 }
 
 if(isset($_POST['status']) && isset($_SESSION['username'])) {
@@ -412,25 +422,12 @@ if(isset($raw)) {
 	exit;
 }
 
-if(isset($title)) {
-	$title = strtoupper($title).' :: STATUS.RYSLIG.XYZ';
-} else {
-	$title = 'STATUS.RYSLIG.XYZ';
-}
-
-if($load == "pages/permalink.php") {
-	$stmt = $conn->prepare("SELECT * FROM updates WHERE id = ?");
-	$stmt->bind_param("i", $_GET['id']);
-	$stmt->execute();
-	$stmt->store_result();
-	if($stmt->num_rows == 0) {
-		http_response_code(404);
-		exit;
+if($load !== "pages/permalink.php") {
+	if(isset($title)) {
+		$title = 'Status - '.$title;
 	} else {
-		$sql = mysqli_fetch_array($conn->query("SELECT * FROM updates WHERE id = ".intval($_GET['id'])));
-		$title = $sql['author'].": ".$sql['status'];
+		$title = 'Status';
 	}
-	$stmt->close();
 }
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
