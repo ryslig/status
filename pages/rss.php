@@ -1,7 +1,7 @@
 <?php
 $timeline = new Timeline;
 $timeline->paging = false;
-$timeline->limit = 15;
+$timeline->limit = 30;
 
 if(isset($_GET['user'])) {
 	$timeline->type = "profile";

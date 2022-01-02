@@ -8,8 +8,8 @@ $GLOBALS['conn'] = $conn = new mysqli($config['db']['host'], $config['db']['user
 if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
 $conn->set_charset("utf8mb4");
 
-ini_set('session.gc_maxlifetime', 86400);
-session_set_cookie_params(86400);
+ini_set('session.gc_maxlifetime', 2628000);
+session_set_cookie_params(2628000);
 session_start();
 
 if($config['debug'] == true) {
@@ -19,6 +19,11 @@ if($config['debug'] == true) {
 	mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 } else {
 	error_reporting(0);
+}
+
+if($_SERVER['REQUEST_METHOD'] == "POST" && isset($_SERVER['HTTP_REFERER']) && !strpos($_SERVER['HTTP_REFERER'], "status.ryslig.xyz")) {
+	http_response_code(400);
+	exit;
 }
 
 class Timeline {
@@ -74,7 +79,12 @@ class Timeline {
 					echo '<img src="/images/default.gif" width="45" height="45" class="thumb" alt="'.$status['author'].'">';
 				}
 				echo '</a></td><td><strong><a href="/profile?user='.$status['author'].'">'.$status['author'].'</a>:</strong> '.$this->place_links(htmlspecialchars($status['status'])).' <small>(<a href="/permalink?id='.$status['id'].'">'.$this->time_elapsed_string($status['date']).'</a>';
-				if(isset($status['reply'])) echo ' <a href="/permalink?id='.$status['reply'].'">in reply to '.mysqli_fetch_array($GLOBALS['conn']->query("SELECT author FROM updates WHERE id = ".$status['reply']))['author'].'</a>';
+				if(isset($status['reply'])) {
+					$replyauthor = mysqli_fetch_array($GLOBALS['conn']->query("SELECT author FROM updates WHERE id = ".$status['reply']));
+					if($replyauthor) {
+						echo ' <a href="/permalink?id='.$status['reply'].'">in reply to '.$replyauthor['author'].'</a>';
+					}
+				}
 				echo ')</small> ';
 				if(isset($_SESSION['username'])) {
 					echo '<img src="/images/icon_reply.gif" alt="Reply" title="Reply" onclick="reply(\''.$status['id'].'\')" width="16" height="16">';
@@ -88,7 +98,12 @@ class Timeline {
 		} elseif($format == 1) {
 			foreach($GLOBALS['conn']->query($sql) as $status) {
 				echo '<p>'.$this->place_links(htmlspecialchars($status['status'])).' <small>(<a href="/permalink?id='.$status['id'].'">'.$this->time_elapsed_string($status['date']).'</a>';
-				if(isset($status['reply'])) echo ' <a href="/permalink?id='.$status['reply'].'">in reply to '.mysqli_fetch_array($GLOBALS['conn']->query("SELECT author FROM updates WHERE id = ".$status['reply']))['author'].'</a>';
+				if(isset($status['reply'])) {
+					$replyauthor = mysqli_fetch_array($GLOBALS['conn']->query("SELECT author FROM updates WHERE id = ".$status['reply']));
+					if($replyauthor) {
+						echo ' <a href="/permalink?id='.$status['reply'].'">in reply to '.$replyauthor['author'].'</a>';
+					}
+				}
 				echo ')</small>';
 				if(isset($_SESSION['username'])) {
 					echo '<img src="/images/icon_reply.gif" alt="Reply" title="Reply" onclick="reply(\''.$status['id'].'\')" width="16" height="16">';
@@ -393,10 +408,16 @@ if(isset($_SESSION['username'])) {
 
 if(isset($_POST['status']) && isset($_SESSION['username'])) {
 	$status = trim($_POST['status']);
+	$updatecount = mysqli_fetch_assoc($GLOBALS['conn']->query("SELECT COUNT(id) AS count FROM updates WHERE author = '".$_SESSION['username']."' AND date > DATE_SUB(NOW(), INTERVAL 24 HOUR)"));
+	$olduser = mysqli_fetch_assoc($GLOBALS['conn']->query("SELECT COUNT(*) AS count FROM users WHERE username = '".$_SESSION['username']."' AND date > DATE_SUB(NOW(), INTERVAL 1 WEEK)"));
 	if(strlen($status) > 2) {
 		if(strlen($status) <= 200) {
 			if(!isset($_SESSION['last_status']) || $_SESSION['last_status'] !== $status) {
 				if(!isset($_SESSION['last_status_date']) || strtotime($_SESSION['last_status_date']) < strtotime("-30 seconds")) {
+					if($olduser['count'] == 1 && $updatecount['count'] >= 10) {
+						$_SESSION['alert'] = "You have ran out of updates for the day. Come back tomorrow!";
+						exit;
+					}
 					$_SESSION['last_status'] = $status;
 					$_SESSION['last_status_date'] = date(DATE_RFC822);
 					$reply = intval($_POST['reply']);

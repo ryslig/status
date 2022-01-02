@@ -43,7 +43,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 		$stmt->close();
 		$_SESSION['username'] = $username;
 		$_SESSION['alert'] = "Account successfully created!";
-		header('Location: /home');
+		header('Location: /');
 	} else {
 		header('Location: /signup');
 	}

@@ -173,6 +173,7 @@ $router->post('/update', function() {
 					if(!isset($latest) || $latest['status'] !== $status) {
 						if(strtotime($latest['date']) < strtotime("-30 seconds")) {
 							if(!empty($_POST['reply'])) {
+								$reply = intval($_POST['reply']);
 								$stmt = $GLOBALS['conn']->prepare("INSERT INTO updates (author, status, reply) VALUES (?, ?, ?)");
 								$stmt->bind_param("ssi", $user, $status, $reply);
 							} else {
@@ -194,7 +195,7 @@ $router->get('/delete', function() {
 		if(isset($_GET['id'])) {
 			$user = getUserFromToken($_GET['token']);
 			$id = intval($_GET['id']);
-			$stmt = $GLOBALS['conn']->prepare("DELETE FROM updates WHERE username = ? AND id = ?");
+			$stmt = $GLOBALS['conn']->prepare("DELETE FROM updates WHERE author = ? AND id = ?");
 			$stmt->bind_param("si", $user, $id);
 			$stmt->execute();
 		} else { alert('This function requires the "id" parameter!'); }

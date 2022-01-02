@@ -23,8 +23,8 @@ function delete_status(id) {
 	}
 }
 
-function reply(id) {
-	var update = prompt("What would you like to reply with?");
+function reply(id, txt) {
+	var update = prompt("What would you like to reply with?", txt);
 	if(update != null && update != "") {
 		if(update.length <= 200) {
 			if(legacy == true) {
@@ -43,7 +43,7 @@ function reply(id) {
 			}
 		} else {
 			alert("Your reply is longer than 200 characters.");
-			reply(id);
+			reply(id, update);
 		}	
 	}
 }

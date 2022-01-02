@@ -1,4 +1,10 @@
-<h2>what are you doing? <small><span id="counter">200</span></small></h2>
+<h2>what are you doing? <small><span id="counter">200</span><?php
+$updatecount = mysqli_fetch_assoc($GLOBALS['conn']->query("SELECT COUNT(id) AS count FROM updates WHERE author = '".$_SESSION['username']."' AND date > DATE_SUB(NOW(), INTERVAL 24 HOUR)"));
+$olduser = mysqli_fetch_assoc($GLOBALS['conn']->query("SELECT COUNT(*) AS count FROM users WHERE username = '".$_SESSION['username']."' AND date > DATE_SUB(NOW(), INTERVAL 1 WEEK)"));
+if($olduser['count'] == 1) {
+	echo ", ".(10 - intval($updatecount['count']))." updates left.";
+}
+?></small></h2>
 <form method="post" action="/home">
 	<textarea name="status" id="status" maxlength="200" oninput="count_it()" autocomplete="off" rows="3"></textarea>
 	<br><br>

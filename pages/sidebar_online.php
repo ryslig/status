@@ -10,5 +10,5 @@
 <ul>
 	<li>Updates: <?php echo mysqli_fetch_array(mysqli_query($conn, "SELECT COUNT(*) FROM updates WHERE author = '".$_SESSION['username']."'"))['0']; ?></li>
 	<li>Following: <?php echo mysqli_fetch_array(mysqli_query($conn, "SELECT COUNT(*) FROM follows WHERE follower = '".$_SESSION['username']."'"))['0']; ?></li>
-	<li>Mentions: <?php echo mysqli_fetch_array(mysqli_query($conn, "SELECT COUNT(*) FROM updates WHERE status LIKE '%@".$_SESSION['username']."%'"))['0']; ?></li>
+	<li>Mentions: <?php echo mysqli_fetch_array(mysqli_query($conn, "SELECT COUNT(*) FROM updates WHERE status LIKE '%@".$_SESSION['username']."%' OR reply IN(SELECT id FROM updates WHERE author = '".$_SESSION['username']."')"))['0']; ?></li>
 </ul>
