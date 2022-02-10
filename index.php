@@ -181,8 +181,8 @@ class Timeline {
 		}
 	}
 	private function place_links($message) {
-		preg_match_all("~(https?://(?:www\.)?[^\s]+)~i", $message, $preg);
-		if(!empty($preg[0])) {
+		$message = preg_replace("~(https?://(?:www\.)?[^\s]+)~i", '<a href="$1" target="_blank">$1</a>', $message);
+		/*if(!empty($preg[0])) {
 			foreach($preg[0] as $link) {
 				if(strlen($link) > 50) {
 					$visible_link = '<a href="'.$link.'" target="_blank">'.substr($link, 0, 45).'&hellip;</a>';
@@ -191,7 +191,7 @@ class Timeline {
 				}
 				$message = str_replace($link, $visible_link, $message);
 			}
-		}
+		}*/
 		$message = preg_replace('/@(\w+)/', '<a href="/profile?user=$1">@$1</a>', $message);
 		unset($preg);
 		return $message;

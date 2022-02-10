@@ -168,7 +168,7 @@ $router->post('/update', function() {
 			if(strlen($status) > 2) {
 				if(strlen($status) <= 200) {
 					$user = getUserFromToken($_POST['token']);
-					$latest = $GLOBALS['conn']->query("SELECT * FROM updates WHERE author = '".$user."'");
+					$latest = $GLOBALS['conn']->query("SELECT * FROM updates WHERE author = '".$user."' ORDER BY id DESC LIMIT 1");
 					$latest = $latest->fetch_assoc();
 					if(!isset($latest) || $latest['status'] !== $status) {
 						if(strtotime($latest['date']) < strtotime("-30 seconds")) {
